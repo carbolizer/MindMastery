@@ -2,9 +2,10 @@ using UnityEngine;
 using System.Collections.Generic;
 
 public struct Card {
-    public Card(string name = "", int value = 0) { this.name = name; this.value = value; }
+    public Card(string name = "", int value = 0, bool hidden = false) { this.name = name; this.value = value; this.hidden = hidden; }
     public string name;
     public int value;
+    public bool hidden;
 }
 
 public class Deck {
