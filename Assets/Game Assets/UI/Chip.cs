@@ -4,8 +4,8 @@ public enum ChipState
 {
     Lazy, //In box (new)
     Held, //Out of box (held)
-    OnTable,
-    DeletionScheduled
+    OnTable, //On Table
+    DeletionScheduled //To be deleted, after bet or put back in box
 
 }
 public enum ChipType
@@ -50,7 +50,6 @@ public class Chip : MonoBehaviour
     void Start()
     {
         RefreshValue();
-        //Debug.Log("test");
         m_state = ChipState.Lazy;
         GetComponent<UIButton>().ClickFunction.AddListener(OnDragStart);
     }
@@ -191,32 +190,50 @@ public class Chip : MonoBehaviour
 
         if (m_onTable)
         {
-            ClosestTile = null;
-            foreach (var cell in RouletteManager.Instance.Cells)
-            {
-                Rect tileRect = new Rect(
-                    new Vector2(cell.transform.position.x - cell.transform.localScale.x / 2, cell.transform.position.y - cell.transform.localScale.y / 2),
-                    new Vector2(cell.transform.localScale.x, cell.transform.localScale.y)
-                );
-                if (tileRect.Contains(transform.position))
-                {
-                   ClosestTile = cell;
-                }
-                
-            }
 
-            foreach (var cell in RouletteManager.Instance.ExtraCells)
-            {
-                Rect tileRect = new Rect(
-                    new Vector2(cell.transform.position.x - cell.transform.localScale.x / 2, cell.transform.position.y - cell.transform.localScale.y / 2),
-                    new Vector2(cell.transform.localScale.x, cell.transform.localScale.y)
-                );
-                if (tileRect.Contains(transform.position))
+            ClosestTile = null;
+
+            switch (GlobalGameManager.Instance.currentGame)
+            {   
+                case CurrentGame.None:
+                //Roaming
+                break;
+
+
+                case CurrentGame.Roulette:
+
+                //Loops through all tiles in the game (roulette) and sets ClosestTile to the one that the
+                //Chip is on
+                //To make a new one, if you dont have places that are crowded together, you can just use OnCollisionEnter/Exit2D
+                //To set the Closest Tile
+                foreach (var cell in RouletteManager.Instance.Cells)
                 {
-                   ClosestTile = cell;
+                    Rect tileRect = new Rect(
+                        new Vector2(cell.transform.position.x - cell.transform.localScale.x / 2, cell.transform.position.y - cell.transform.localScale.y / 2),
+                        new Vector2(cell.transform.localScale.x, cell.transform.localScale.y)
+                    );
+                    if (tileRect.Contains(transform.position))
+                    {
+                    ClosestTile = cell;
+                    }
+                    
                 }
-                
+
+                foreach (var cell in RouletteManager.Instance.ExtraCells)
+                {
+                    Rect tileRect = new Rect(
+                        new Vector2(cell.transform.position.x - cell.transform.localScale.x / 2, cell.transform.position.y - cell.transform.localScale.y / 2),
+                        new Vector2(cell.transform.localScale.x, cell.transform.localScale.y)
+                    );
+                    if (tileRect.Contains(transform.position))
+                    {
+                    ClosestTile = cell;
+                    }
+                    
+                }
+                break;
             }
+            
         }
     }
 
@@ -225,7 +242,9 @@ public class Chip : MonoBehaviour
         m_state = ChipState.Held;
     }
 
-
+    //Table Must have a Collider2D marked as "Trigger", and a rigidbody with continuous collision
+    //detection. you may freeze pos and rotation and disable gravity on it if it is static
+    //Same for ChipBox, though you can just use the one i made across both games
     void OnTriggerEnter2D(Collider2D collision)
     {   
         if (collision.gameObject.name == "TableHB")

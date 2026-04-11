@@ -32,8 +32,20 @@ public class ChipBoxInteraction : MonoBehaviour
             var item = chipPositions[i];
 
             //Skip if already spawned
-            if (spawnedChips.ContainsKey(i) && spawnedChips[i] != null)
-                continue;
+            if (spawnedChips.ContainsKey(i))
+            {
+                var existing = spawnedChips[i];
+
+                
+                if (existing == null || !existing.GetComponent<Chip>().m_overBox)
+                {
+                    spawnedChips.Remove(i);
+                }
+                else
+                {
+                    continue;
+                }
+            }
 
             var chipData = GlobalGameManager.Player.m_chips[(int)item.chipType];
 

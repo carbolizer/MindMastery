@@ -4,6 +4,13 @@ using System.Collections;
 using Unity.VisualScripting;
 using System.Linq;
 
+public enum CurrentGame
+{
+    None, //Roaming casino
+    Roulette,
+    BlackJack,
+    ThreeCardPoker
+}
 
 
 
@@ -14,10 +21,12 @@ public class GlobalGameManager : MonoBehaviour
     public Vector3 CursorPos;
     public CursorState CursorState;
 
+    public CurrentGame currentGame;
 
 
     public GameObject HoveredObject = null;
     public bool HoveringObject = false;
+    
     //Internal logic use only; used to determine HoveredObject
     [SerializeField]
     private List<GameObject> HoveredObjects = new List<GameObject>();
@@ -62,8 +71,6 @@ public class GlobalGameManager : MonoBehaviour
         Player.m_chips[50_000] = new PokerChip{m_amount = 0, m_value = 50_000};
         Player.m_chips[100_000] = new PokerChip{m_amount = 0, m_value = 100_000};
 
-
-        
     }
 
 
