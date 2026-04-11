@@ -9,6 +9,12 @@ public enum OutlineUpdateState
     NeedsUpdate
 }
 
+public enum SpriteUpdateState
+{
+    UpdateComplete,
+    NeedsUpdate
+}
+
 
 
 public class UIButton : MonoBehaviour
@@ -20,6 +26,7 @@ public class UIButton : MonoBehaviour
     private float m_outlineWidth = 15;
 
     private OutlineUpdateState m_outlineUpdateState = OutlineUpdateState.UpdateComplete;
+    private SpriteUpdateState m_spriteUpdateState = SpriteUpdateState.UpdateComplete;
 
     //Assign a function from a different script here
     [SerializeField]
@@ -28,7 +35,7 @@ public class UIButton : MonoBehaviour
     void Start()
     {
         //0.125
-        GetComponent<SpriteRenderer>().material.SetColor("_Color", m_outlineColor);
+        GetComponent<SpriteRenderer>().material.SetColor("_SolidOutline", m_outlineColor);
         GetComponent<SpriteRenderer>().material.SetFloat("_Thickness", m_outlineWidth / ((transform.localScale.x + transform.localScale.y) / 2));
     }
 
@@ -52,6 +59,21 @@ public class UIButton : MonoBehaviour
             
             case OutlineUpdateState.UpdateComplete:
                 //No outline update needed
+
+                break;
+        }
+
+        switch (m_spriteUpdateState)
+        {
+            case SpriteUpdateState.NeedsUpdate:
+                //Swap sprite
+
+                m_spriteUpdateState = SpriteUpdateState.UpdateComplete;
+                break;
+
+            case SpriteUpdateState.UpdateComplete:
+                //Do Nothing
+
                 break;
         }
     }

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Collections;
 using Unity.VisualScripting;
 
+
+
+
 public class GlobalGameManager : MonoBehaviour
 {
     public static GlobalGameManager Instance { get; private set; }
@@ -17,6 +20,7 @@ public class GlobalGameManager : MonoBehaviour
     //Internal logic use only; used to determine HoveredObject
     [SerializeField]
     private List<GameObject> HoveredObjects = new List<GameObject>();
+
 
 
     void Awake()
@@ -36,12 +40,16 @@ public class GlobalGameManager : MonoBehaviour
     void Update()
     {
         UpdateHoverList();
+
+    
+
+
     }
 
 
     private void UpdateHoverList()
     {
-        if (HoveredObjects.Count > 0)
+        if (HoveredObjects.Count > 0 && CursorState == CursorState.UP)
         {   
             if (HoveredObjects[HoveredObjects.Count - 1] != HoveredObject)
             {
