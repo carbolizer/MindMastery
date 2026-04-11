@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 guid: 931df6f1192f3f64b967f24e616055ed
+=======
+guid: 2736dd6154fd147e8af5e0192d9e4472
+>>>>>>> harrison-dev
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -96,6 +100,7 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+<<<<<<< HEAD
   - serializedVersion: 4
     buildTarget: Android
     maxTextureSize: 2048
@@ -122,6 +127,8 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+=======
+>>>>>>> harrison-dev
   spriteSheet:
     serializedVersion: 2
     sprites:
