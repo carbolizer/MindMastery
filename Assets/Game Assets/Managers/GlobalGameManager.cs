@@ -45,25 +45,24 @@ public class GlobalGameManager : MonoBehaviour
 
     private void InitializeChips()
     {
-        Player.m_chips = new List<PokerChip>
-        {
-            //Quite unrealistic, but if the base goal is 1M, then it works fine
-            new PokerChip{m_amount = 2, m_value = 10},
-            new PokerChip{m_amount = 0, m_value = 20},
-            new PokerChip{m_amount = 0, m_value = 50},
-            new PokerChip{m_amount = 0, m_value = 100},
-            new PokerChip{m_amount = 0, m_value = 250},
-            new PokerChip{m_amount = 0, m_value = 500},
-            new PokerChip{m_amount = 0, m_value = 700},
-            new PokerChip{m_amount = 0, m_value = 1_000},
-            new PokerChip{m_amount = 0, m_value = 1_500},
-            new PokerChip{m_amount = 0, m_value = 3_000},
-            new PokerChip{m_amount = 0, m_value = 4_000},
-            new PokerChip{m_amount = 0, m_value = 5_000},
-            new PokerChip{m_amount = 0, m_value = 10_000},
-            new PokerChip{m_amount = 0, m_value = 50_000},
-            new PokerChip{m_amount = 0, m_value = 100_000}
-        };
+        Player.m_chips[10] = new PokerChip{m_amount = 2, m_value = 10};
+        Player.m_chips[20] = new PokerChip{m_amount = 0, m_value = 20};
+        Player.m_chips[50] = new PokerChip{m_amount = 0, m_value = 50};
+        Player.m_chips[100] = new PokerChip{m_amount = 0, m_value = 100};
+        Player.m_chips[250] = new PokerChip{m_amount = 0, m_value = 250};
+        Player.m_chips[500] = new PokerChip{m_amount = 0, m_value = 500};
+        Player.m_chips[700] = new PokerChip{m_amount = 0, m_value = 700};
+        Player.m_chips[1_000] = new PokerChip{m_amount = 0, m_value = 1_000};
+        Player.m_chips[1_500] = new PokerChip{m_amount = 0, m_value = 1_500};   
+        Player.m_chips[3_000] = new PokerChip{m_amount = 0, m_value = 3_000};
+        Player.m_chips[4_000] = new PokerChip{m_amount = 0, m_value = 4_000};
+        Player.m_chips[5_000] = new PokerChip{m_amount = 0, m_value = 5_000};
+        Player.m_chips[10_000] = new PokerChip{m_amount = 0, m_value = 10_000};
+        Player.m_chips[50_000] = new PokerChip{m_amount = 0, m_value = 50_000};
+        Player.m_chips[100_000] = new PokerChip{m_amount = 0, m_value = 100_000};
+
+
+        
     }
 
 
@@ -117,7 +116,7 @@ public class GlobalGameManager : MonoBehaviour
 
 public class PlayerData
 {
-    public List<PokerChip> m_chips;
+    public Dictionary<int, PokerChip> m_chips = new Dictionary<int, PokerChip>();
     public float m_suspicion = 0; //0%-100%
     //AKA Accuracy of powers
     public float m_sobriety = 100; //0%-100%

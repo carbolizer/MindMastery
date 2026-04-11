@@ -16,29 +16,28 @@ public class DragScript : MonoBehaviour
         switch (GlobalGameManager.Instance.CursorState)
         {
             case CursorState.DOWN:
-                if (m_Grabbed)
-                {
-                    transform.position = GlobalGameManager.Instance.CursorPos - ClickStartOffset;
-                }
-                break;
+            if (m_Grabbed)
+            {
+                transform.position = GlobalGameManager.Instance.CursorPos - ClickStartOffset;
+            }
+            break;
 
             case CursorState.UP:
-                OnDragEnd();
-                break;
+            OnDragEnd();
+            break;
         }
     }
 
     public void OnDragStart()
     {
         m_Grabbed = true;
-        ClickStartOffset = GlobalGameManager.Instance.CursorPos - transform.position;
-        
+        ClickStartOffset = GlobalGameManager.Instance.CursorPos - transform.position;  
     }
 
     public void OnDragEnd()
     {
         m_Grabbed = false;
-        ClickStartOffset = Vector2.zero;
+        ClickStartOffset = Vector2.zero;  
     }
 
 }
