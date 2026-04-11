@@ -60,16 +60,13 @@
         "*.asset": "yaml",
         "*.meta": "yaml",
         "*.prefab": "yaml",
-        "*.unity": "yaml",
+        "*.unity": "yaml"
     },
     "explorer.fileNesting.enabled": true,
     "explorer.fileNesting.patterns": {
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-<<<<<<< HEAD
+    "State-of-Mind.slnx=======dotnet.defaultSolution": "MindMastery.slnx>>>>>>>harrison-dev",
     "dotnet.defaultSolution": "State-of-Mind.slnx"
-=======
-    "dotnet.defaultSolution": "MindMastery.slnx"
->>>>>>> harrison-dev
 }

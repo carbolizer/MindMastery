@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class GLobalGameScripts : MonoBehaviour
+public class GobalGameFunctions : MonoBehaviour
 {
     public void Function1()
     {
