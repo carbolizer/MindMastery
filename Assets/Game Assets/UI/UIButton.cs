@@ -2,31 +2,78 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 
+
+public enum OutlineUpdateState
+{
+    UpdateComplete,
+    NeedsUpdate
+}
+
+
+
 public class UIButton : MonoBehaviour
 {
-    public Color m_outlineColor = Color.white;
+    private bool m_hovered = false;
+    [SerializeField]
+    private Color m_outlineColor = Color.white;
+    [SerializeField]
+    private float m_outlineWidth = 15;
+
+    private OutlineUpdateState m_outlineUpdateState = OutlineUpdateState.UpdateComplete;
+
     //Assign a function from a different script here
     [SerializeField]
     public UnityEvent ClickFunction;
 
     void Start()
     {
-        var outline = gameObject.AddComponent<Outline>();
-        outline.enabled = false;
-        outline.OutlineColor = m_outlineColor;
-        outline.OutlineMode = Outline.Mode.OutlineAll;
-        outline.OutlineWidth = 10;
+        //0.125
+        GetComponent<SpriteRenderer>().material.SetColor("_Color", m_outlineColor);
+        GetComponent<SpriteRenderer>().material.SetFloat("_Thickness", m_outlineWidth / ((transform.localScale.x + transform.localScale.y) / 2));
+    }
+
+    void Update()
+    {
+        switch (m_outlineUpdateState)
+        {
+            case OutlineUpdateState.NeedsUpdate:
+                if (m_hovered)
+                {
+                    //set outline true
+                    GetComponent<SpriteRenderer>().material.SetFloat("_OutlineEnabled", 1.0f);
+                    
+                } else
+                {
+                    //set outline false
+                    GetComponent<SpriteRenderer>().material.SetFloat("_OutlineEnabled", 0.0f);
+                }
+                m_outlineUpdateState = OutlineUpdateState.UpdateComplete;
+                break;
+            
+            case OutlineUpdateState.UpdateComplete:
+                //No outline update needed
+                break;
+        }
     }
     
+    public void SetOutlineState(bool val)
+    {
+        
+        m_hovered = val;
+        m_outlineUpdateState = OutlineUpdateState.NeedsUpdate;
+        
+    }
+
+
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.name == "UIHB")
+        if (collision.gameObject.name == "UIHB") //UI HitBox
             GlobalGameManager.Instance.AddButtonToQueue(gameObject);
     }
 
     void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.gameObject.name == "UIHB")
+        if (collision.gameObject.name == "UIHB") //UI HitBox
             GlobalGameManager.Instance.RemoveButtonFromQueue(gameObject);
     }
 

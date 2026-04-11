@@ -14,46 +14,9 @@ public class GlobalGameManager : MonoBehaviour
 
     public GameObject HoveredObject = null;
     public bool HoveringObject = false;
-    public List<GameObject> HoveredObjects = new List<GameObject>();
-
-    private void UpdateHoverList()
-    {
-        if (HoveredObjects.Count > 0)
-        {   
-            if (HoveredObjects[HoveredObjects.Count - 1] != HoveredObject)
-            {
-                if (HoveredObject != null)
-                    HoveredObject.GetComponent<Outline>().enabled = false;
-                
-
-                HoveredObject = HoveredObjects[HoveredObjects.Count - 1];
-
-                HoveredObject.GetComponent<Outline>().enabled = true;
-                HoveringObject = true;
-                
-            }
-        }
-        else
-        {
-            if (HoveredObject != null)
-                HoveredObject.GetComponent<Outline>().enabled = false;
-            HoveredObject = null;
-            HoveringObject = false;
-        }
-    }
-
-    
-
-    public void AddButtonToQueue(GameObject obj)
-    {
-        if (!HoveredObjects.Contains(obj))
-            HoveredObjects.Add(obj);
-    }
-
-    public void RemoveButtonFromQueue(GameObject obj)
-    {
-        HoveredObjects.Remove(obj);
-    }
+    //Internal logic use only; used to determine HoveredObject
+    [SerializeField]
+    private List<GameObject> HoveredObjects = new List<GameObject>();
 
 
     void Awake()
@@ -74,6 +37,51 @@ public class GlobalGameManager : MonoBehaviour
     {
         UpdateHoverList();
     }
+
+
+    private void UpdateHoverList()
+    {
+        if (HoveredObjects.Count > 0)
+        {   
+            if (HoveredObjects[HoveredObjects.Count - 1] != HoveredObject)
+            {
+                if (HoveredObject != null)
+                    HoveredObject.GetComponent<UIButton>().SetOutlineState(false);
+                    
+                
+                HoveredObject = HoveredObjects[HoveredObjects.Count - 1];
+                HoveringObject = true;
+
+
+                HoveredObject.GetComponent<UIButton>().SetOutlineState(true);
+
+            }
+        }
+        else
+        {
+            if (HoveredObject != null)
+                HoveredObject.GetComponent<UIButton>().SetOutlineState(false);
+                
+            HoveredObject = null;
+            HoveringObject = false;
+        }
+    }
+
+    
+
+    public void AddButtonToQueue(GameObject obj)
+    {
+        if (!HoveredObjects.Contains(obj))
+            HoveredObjects.Add(obj);
+    }
+
+    public void RemoveButtonFromQueue(GameObject obj)
+    {
+        HoveredObjects.Remove(obj);
+    }
+
+
+    
 
 }
 
