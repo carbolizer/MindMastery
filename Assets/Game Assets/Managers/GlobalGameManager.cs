@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 using Unity.VisualScripting;
+using System.Linq;
 
 
 
@@ -117,12 +118,31 @@ public class GlobalGameManager : MonoBehaviour
 public class PlayerData
 {
     public Dictionary<int, PokerChip> m_chips = new Dictionary<int, PokerChip>();
+    public float m_money = 20; //Directly replated to chips
     public float m_suspicion = 0; //0%-100%
     //AKA Accuracy of powers
     public float m_sobriety = 100; //0%-100%
 
 
     public bool m_usingCheats = false;
+
+    //Refeshes chip count based on money
+    public void RefreshChipCount()
+    {
+        ChipType[] chipTypes = (ChipType[])System.Enum.GetValues(typeof(ChipType));
+        float amount = m_money;
+        for (int i = 14; i > 0; i--)
+        {
+            int chipsOfThisType = 0;
+            while (amount > (int)chipTypes[i])
+            {
+                amount -= (int)chipTypes[i];
+                chipsOfThisType++;
+            }
+            m_chips[(int)chipTypes[i]].m_amount = chipsOfThisType;
+            
+        }
+    }
 }
 
 

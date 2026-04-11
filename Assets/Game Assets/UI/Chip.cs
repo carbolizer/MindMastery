@@ -31,7 +31,7 @@ public enum ChipType
 public class Chip : MonoBehaviour
 {   
     [SerializeField]
-    private GameObject ClosestTile = null;
+    public GameObject ClosestTile = null;
 
     public ChipState m_state = ChipState.Lazy;
 
@@ -50,7 +50,7 @@ public class Chip : MonoBehaviour
     void Start()
     {
         RefreshValue();
-        Debug.Log("test");
+        //Debug.Log("test");
         m_state = ChipState.Lazy;
         GetComponent<UIButton>().ClickFunction.AddListener(OnDragStart);
     }
@@ -60,55 +60,55 @@ public class Chip : MonoBehaviour
     void RefreshValue()
     {
         //Pick a new sprite based on value
-        var SRC = GetComponent<SpriteRenderer>().color;
+        var sr = GetComponent<SpriteRenderer>();
+
         switch (m_value)
         {
             case ChipType.Ten:
-            SRC = Color.white;
-            break;
+                sr.color = Color.white;
+                break;
             case ChipType.Twenty:
-            SRC = Color.blue;
-            break;
+                sr.color = Color.blue;
+                break;
             case ChipType.Fifty:
-            SRC = Color.red;
-            break;
+                sr.color = Color.red;
+                break;
             case ChipType.OneHundered:
-            SRC = Color.yellow;
-            break;
+                sr.color = Color.yellow;
+                break;
             case ChipType.TwoHunderedFifty:
-            SRC = Color.yellowGreen;
-            break;
+                sr.color = Color.yellowGreen;
+                break;
             case ChipType.FiveHundered:
-            SRC = Color.orange;
-            break;
+                sr.color = Color.orange;
+                break;
             case ChipType.SevenHundered:
-            SRC = Color.purple;
-            break;
+                sr.color = Color.purple;
+                break;
             case ChipType.OneThousand:
-            SRC = Color.teal;
-            break;
+                sr.color = Color.teal;
+                break;
             case ChipType.OneThousandFiveHundered:
-            SRC = Color.tan;
-            break;
+                sr.color = Color.tan;
+                break;
             case ChipType.ThreeThousand:
-            SRC = Color.violet;
-            break;
+                sr.color = Color.violet;
+                break;
             case ChipType.FourThousand:
-            SRC = Color.navyBlue;
-            break;
+                sr.color = Color.navyBlue;
+                break;
             case ChipType.FiveThousand:
-            SRC = Color.brown;
-            break;
+                sr.color = Color.brown;
+                break;
             case ChipType.TenThousand:
-            SRC = Color.cornsilk;
-            break;
+                sr.color = Color.cornsilk;
+                break;
             case ChipType.FiftyThousand:
-            SRC = Color.aquamarine;
-            break;
+                sr.color = Color.aquamarine;
+                break;
             case ChipType.OneHunderedThousand:
-            SRC = Color.black;
-            break;
-
+                sr.color = Color.black;
+                break;
         }
     }
 

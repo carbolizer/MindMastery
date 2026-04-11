@@ -1,41 +1,71 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+
+[System.Serializable]
+public struct ChipPosition
+{
+    public Vector2 position;
+    public ChipType chipType;
+}
+
 
 public class ChipBoxInteraction : MonoBehaviour
 {
     [SerializeField]
-    private GameObject ChipPrefab; //Len 15
-    //3 rows of 5, (8, 5) 
+    private GameObject ChipPrefab; 
+    public List<ChipPosition> chipPositions = new();
+    private Dictionary<int, GameObject> spawnedChips = new();
     
-
-    
-    void Start()
+    void RefreshChips()
     {
-        float xSpacing = 8 / 3;
-        float ySpacing = 5 / 5;
+        foreach (var chip in GlobalGameManager.Player.m_chips)
+        {
+           //Debug.Log(chip.Value.m_amount);
+        }
 
         ChipType[] chipTypes = (ChipType[])System.Enum.GetValues(typeof(ChipType));
         var parent = transform.GetChild(0);
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < chipPositions.Count; i++)
         {
-            for (int j = 0; j < 5; j++)
+            var item = chipPositions[i];
+
+            //Skip if already spawned
+            if (spawnedChips.ContainsKey(i) && spawnedChips[i] != null)
+                continue;
+
+            var chipData = GlobalGameManager.Player.m_chips[(int)item.chipType];
+
+            if (chipData.m_amount > 0)
             {
-                //Place Chips (8, 5)
-                int index = j + (i * 5);
-                GameObject obj = Instantiate(ChipPrefab);
-                obj.GetComponent<Chip>().m_posParent = parent.gameObject;
-                obj.GetComponent<Chip>().m_value = chipTypes[index];
-                obj.GetComponent<Chip>().m_parentOffset = new Vector3(j * xSpacing, i * ySpacing, -24);
+                Vector3 pos = new Vector3(item.position.x, item.position.y + 4, -24);
+
+                GameObject obj = Instantiate(ChipPrefab, pos, Quaternion.identity);
                 
-                obj.transform.position = new Vector3(j * xSpacing, i * ySpacing, -24);
+                var chipComponent = obj.GetComponent<Chip>();
+                chipComponent.m_posParent = parent.gameObject;
+                chipComponent.m_value = item.chipType;
+                chipComponent.m_parentOffset = pos;
+
+                spawnedChips[i] = obj;
+
+     
             }
         }
+    }
+    
+    void Start()
+    {
+        RefreshChips();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        RefreshChips();
     }
 }
+//(-1.5, -3) (-.75, -3) (0, -3) (.75, -3) (1.5, -3) Top
+//(-1.5, -3.75) (-.75, -3.75) (0, -3.75) (.75, 3.75) (1.5, 3.75) Mid
+//(-1.5, -4.5) (-.75, -4.5) (0, -4.5) (.75, -3) (1.5, -4.5) Bot
