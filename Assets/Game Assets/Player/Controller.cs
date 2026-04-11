@@ -14,7 +14,7 @@ public class Controller : MonoBehaviour
     private Rigidbody2D rb;
     private float moveSpeed = 8f;
 
-    void OnEnable()
+    void Awake()
     {
         var actionMap = inputActions.FindActionMap("Default");
         left_right = actionMap.FindAction("LeftRight");
@@ -28,7 +28,7 @@ public class Controller : MonoBehaviour
 
    
 
-    void Update()
+    void FixedUpdate()
     {
         float x = left_right.ReadValue<float>();
         float y = up_down.ReadValue<float>();
