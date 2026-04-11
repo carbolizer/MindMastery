@@ -41,6 +41,9 @@ public class Chip : MonoBehaviour
 
     public Vector3 m_parentOffset;
     public GameObject m_posParent;
+
+    private Vector3 ClickStartOffset = new();
+
     public ChipType m_value = ChipType.Ten;
 
 
@@ -49,6 +52,7 @@ public class Chip : MonoBehaviour
         RefreshValue();
         Debug.Log("test");
         m_state = ChipState.Lazy;
+        GetComponent<UIButton>().ClickFunction.AddListener(OnDragStart);
     }
 
 
@@ -147,6 +151,7 @@ public class Chip : MonoBehaviour
                 } else
                 {
                     m_state = ChipState.OnTable;
+                    ClickStartOffset = Vector2.zero; 
                 }
                 break;
 
@@ -160,7 +165,14 @@ public class Chip : MonoBehaviour
                 {
                     m_state = ChipState.Held;
                     GlobalGameManager.Player.m_chips[(int)m_value].m_amount -= 1;
+                } else
+                {
+                    transform.position = m_parentOffset + m_posParent.transform.position;
                 }
+                break;
+
+                case ChipState.Held:
+                transform.position = GlobalGameManager.Instance.CursorPos - ClickStartOffset;
                 break;
 
                 case ChipState.OnTable:
@@ -207,6 +219,12 @@ public class Chip : MonoBehaviour
             }
         }
     }
+
+    public void OnDragStart()
+    {
+        m_state = ChipState.Held;
+    }
+
 
     void OnTriggerEnter2D(Collider2D collision)
     {   
