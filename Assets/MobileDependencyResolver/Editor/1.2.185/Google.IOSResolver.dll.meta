@@ -7,6 +7,7 @@ labels:
 - gvhp_targets-editor
 PluginImporter:
   externalObjects: {}
+<<<<<<< HEAD
   serializedVersion: 3
   iconMap: {}
   executionOrder: {}
@@ -24,6 +25,29 @@ PluginImporter:
       settings:
         DefaultValueInitialized: true
     WindowsStoreApps:
+=======
+  serializedVersion: 2
+  iconMap: {}
+  executionOrder: {}
+  isPreloaded: 0
+  isOverridable: 0
+  validateReferences: 0
+  platformData:
+  - first:
+      Any: 
+    second:
+      enabled: 0
+      settings: {}
+  - first:
+      Editor: Editor
+    second:
+      enabled: 0
+      settings:
+        DefaultValueInitialized: true
+  - first:
+      Windows Store Apps: WindowsStoreApps
+    second:
+>>>>>>> harrison-dev
       enabled: 0
       settings:
         CPU: AnyCPU
