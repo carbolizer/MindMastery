@@ -15,6 +15,8 @@ public class BlackJack : MonoBehaviour {
         Add states to state machine
     */
     void Start() {
+        deck = new();
+        
         State bet       = new("bet",        () => { shouldPlayAgain = false; placedBet = false; playerBet = 0; }, (dt) => {}, () => {});
         State deal      = new("deal",       () => { playerCards.Clear(); dealerCards.Clear(); dealState = 0; bust = false; blackJack = false; playerSum = 0; dealerSum = 0; }, UpdateDeal, () => {});
         State play      = new("play",       () => { shouldHit = false; shouldStand = false; blackJack = playerSum == 21; }, (dt) => {}, () => {});
@@ -68,7 +70,7 @@ public class BlackJack : MonoBehaviour {
     public void PlayAgain()             { shouldPlayAgain = true; }
 
 // private
-    private Deck            deck            = new();
+    private Deck            deck;
     private StateMachine    stateMachine    = new();
     private List<Card>      dealerCards     = new();
     private List<Card>      playerCards     = new();

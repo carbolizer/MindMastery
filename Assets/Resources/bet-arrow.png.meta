@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 1e8eceb772b733d488aa390186ca7b5e
+guid: 3f746f3b3431c4e0cbd7c63d4ddbf180
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2433869408746247375
-    second: A-C_0
+      213: -2734888490047849090
+    second: bet-arrow_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: A-C_0
+      name: bet-arrow_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 16
-        height: 24
+        height: 16
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: fc492020557d6c120800000000000000
-      internalID: 2433869408746247375
+      spriteID: e7db46a8869bb0ad0800000000000000
+      internalID: -2734888490047849090
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      A-C_0: 2433869408746247375
+      bet-arrow_0: -2734888490047849090
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
