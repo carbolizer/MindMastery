@@ -15,13 +15,15 @@ public class Chip : MonoBehaviour
     {
         if (m_onTable)
         {
-            float dist = float.MaxValue;
+            ClosestTile = null;
             foreach (var cell in RouletteManager.Instance.Cells)
             {
-                float newDist = Vector3.Distance(cell.transform.position, transform.position);
-                if (newDist < dist)
+                Rect tileRect = new Rect(
+                    new Vector2(cell.transform.position.x - cell.transform.localScale.x / 2, cell.transform.position.y - cell.transform.localScale.y / 2),
+                    new Vector2(cell.transform.localScale.x, cell.transform.localScale.y)
+                );
+                if (tileRect.Contains(transform.position))
                 {
-                   dist = newDist;
                    ClosestTile = cell;
                 }
                 
@@ -29,10 +31,12 @@ public class Chip : MonoBehaviour
 
             foreach (var cell in RouletteManager.Instance.ExtraCells)
             {
-                float newDist = Vector3.Distance(cell.transform.position, transform.position);
-                if (newDist < dist)
+                Rect tileRect = new Rect(
+                    new Vector2(cell.transform.position.x - cell.transform.localScale.x / 2, cell.transform.position.y - cell.transform.localScale.y / 2),
+                    new Vector2(cell.transform.localScale.x, cell.transform.localScale.y)
+                );
+                if (tileRect.Contains(transform.position))
                 {
-                   dist = newDist;
                    ClosestTile = cell;
                 }
                 
@@ -57,6 +61,8 @@ public class Chip : MonoBehaviour
         {
             RouletteManager.Instance.ChipsOnTable.Remove(gameObject);
             m_onTable = false;
+            ClosestTile = null;
+            
         }
     }
 }
