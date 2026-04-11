@@ -1,12 +1,29 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Runtime.CompilerServices;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BlackJack : MonoBehaviour {
 // public
-    public float actionDelay = 0.25f; // seconds
+    public float actionDelay = 0.25f;   // seconds
+    public GameObject playerHand;
+    public GameObject dealerHand;
+    public GameObject playerCardStart;  // where the players hand starts on screen
+    public GameObject dealerCardStart;  // where the dealers hand starts on screen
+    public GameObject cardPrefab;
+    public GameObject againButton;
+    public GameObject playButton;
+    public Canvas gameUI;
+    public float cardOffset = 48f;
+    public float cardWidth = 64f;
+    public TextMeshProUGUI playerCardValue;
+    public TextMeshProUGUI dealerCardValue;
+    public TextMeshProUGUI stateText;
+    public TextMeshProUGUI betAmountText;
+
 
     /*
         Create blackjack states
@@ -16,13 +33,16 @@ public class BlackJack : MonoBehaviour {
     */
     void Start() {
         deck = new();
+        stateText.text = "";
+        againButton.SetActive(false);
+        playButton.SetActive(false);
         
-        State bet       = new("bet",        () => { shouldPlayAgain = false; placedBet = false; playerBet = 0; }, (dt) => {}, () => {});
-        State deal      = new("deal",       () => { playerCards.Clear(); dealerCards.Clear(); dealState = 0; bust = false; blackJack = false; playerSum = 0; dealerSum = 0; }, UpdateDeal, () => {});
+        State bet       = new("bet",        () => { shouldPlayAgain = false; placedBet = false; playerBet = 0; resolveTimer = 0f; playButton.SetActive(false); }, (dt) => { playButton.SetActive(playerBet > 0); }, () => { playButton.SetActive(false); });
+        State deal      = new("deal",       () => { shouldPlayAgain = false; resolveTimer = 0f; DestroyCards(); playerCards.Clear(); dealerCards.Clear(); dealerCardUIs.Clear(); dealState = 0; bust = false; blackJack = false; playerSum = 0; dealerSum = 0; }, UpdateDeal, () => {});
         State play      = new("play",       () => { shouldHit = false; shouldStand = false; blackJack = playerSum == 21; }, (dt) => {}, () => {});
         State hit       = new("hit",        () => { shouldHit = false; hitComplete = false; }, UpdateHit, () => {});
-        State stand     = new("stand",      () => { shouldStand = false; standDone = false; }, UpdateStand, () => {});
-        State resolve   = new("resolve",    Resolve, (dt) => {}, () => {});
+        State stand     = new("stand",      () => { shouldStand = false; standDone = false; RevealCard(1); }, UpdateStand, () => {});
+        State resolve   = new("resolve",    Resolve, UpdateResolve, () => { stateText.text = ""; againButton.SetActive(false); });
         State quit      = new("quit",       () => { shouldQuit = false; }, (dt) => {}, () => {});
 
         Transition startBet         = new("bet",        () => { return shouldPlayAgain; });
@@ -60,14 +80,19 @@ public class BlackJack : MonoBehaviour {
         stateMachine.SetState("bet");
     }
 
-    void Update() { stateMachine.Update(Time.deltaTime); }
+    void Update() { 
+        stateMachine.Update(Time.deltaTime);
+        playerCardValue.text = playerSum.ToString();
+        dealerCardValue.text = dealerSum.ToString();
+        betAmountText.text = playerBet.ToString();
+    }
 
-    public void ChangeBet(int amount)   { if (playerBet + amount > 0) playerBet += amount; }
+    public void ChangeBet(int amount)   { if (playerBet + amount >= 0) playerBet += amount; }
     public void PlaceBet()              { placedBet = true; }
     public void Hit()                   { shouldHit = true; }
     public void Stand()                 { shouldStand = true; }
     public void Quit()                  { shouldQuit = true; }
-    public void PlayAgain()             { shouldPlayAgain = true; }
+    public void PlayAgain()             { shouldPlayAgain = true; placedBet = true; }
 
 // private
     private Deck            deck;
@@ -90,9 +115,16 @@ public class BlackJack : MonoBehaviour {
     private bool            standDone       = false;
 
     private int             sessionEarnings = 0;
+    private float           resolveTimer    = 0f;
+
+    private struct CardUI { public Card card; public GameObject obj; }
+    private List<CardUI>    dealerCardUIs   = new();
 
     private float           actionTimer     = 0f;
     private int             dealState       = 0;
+
+    private float playerCardStartOffset     = 0f;
+    private float dealerCardStartOffset     = 0f;
 
     private void UpdateDeal(float dt) {
         actionTimer += Time.deltaTime;
@@ -100,10 +132,31 @@ public class BlackJack : MonoBehaviour {
         if (actionTimer <= actionDelay) return;
 
         switch (dealState) {
-            case 0: playerCards.Add(deck.PullTopCard()); EvaluatePlayerSum(); break;
-            case 1: dealerCards.Add(deck.PullTopCard()); EvaluateDealerSum(); break;
-            case 2: playerCards.Add(deck.PullTopCard()); EvaluatePlayerSum(); break;
-            case 3: dealerCards.Add(deck.PullTopCard()); EvaluateDealerSum(); break;
+            case 0: 
+                var pcard1 = deck.PullTopCard(); 
+                playerCards.Add(pcard1); 
+                EvaluatePlayerSum(); 
+                AddCardToUI(pcard1, playerCardStart.transform, true); 
+                break;
+            case 1: 
+                var dcard1 = deck.PullTopCard();
+                dealerCards.Add(dcard1); 
+                EvaluateDealerSum(); 
+                AddCardToUI(dcard1, dealerCardStart.transform, false);
+                break;
+            case 2:
+                var pcard2 = deck.PullTopCard(); 
+                playerCards.Add(pcard2);
+                EvaluatePlayerSum();
+                AddCardToUI(pcard2, playerCardStart.transform, true);
+                break;
+            case 3:
+                var dcard2 = deck.PullTopCard();
+                dcard2.hidden = true;
+                dealerCards.Add(dcard2); 
+                EvaluateDealerSum(); 
+                AddCardToUI(dcard2, dealerCardStart.transform, false);
+                break;
         }
 
         dealState += 1;
@@ -113,10 +166,12 @@ public class BlackJack : MonoBehaviour {
     private void UpdateHit(float dt) {
         actionTimer += Time.deltaTime;
 
-        if (actionTimer <= actionDelay) return;
+        // if (actionTimer <= actionDelay) return;
 
-        playerCards.Add(deck.PullTopCard());
+        var card = deck.PullTopCard();
+        playerCards.Add(card);
         EvaluatePlayerSum();
+        AddCardToUI(card, playerCardStart.transform, true);
         if (playerSum > 21) bust = true;
         hitComplete = true;
 
@@ -129,25 +184,28 @@ public class BlackJack : MonoBehaviour {
         if (actionTimer <= actionDelay) return;
 
         if (dealerSum < 17) {
-            dealerCards.Add(deck.PullTopCard());
+            var card = deck.PullTopCard();
+            dealerCards.Add(card);
             EvaluateDealerSum();
+            AddCardToUI(card, dealerCardStart.transform, false);
         } else standDone = true;
 
         actionTimer = 0f;
     }
 
     private void Resolve() {
-        if (bust)                                           sessionEarnings -= playerBet;
-        else if (blackJack && dealerSum != 21)              sessionEarnings += (int)(playerBet * 1.5f);
-        else if (dealerSum > 21 || playerSum > dealerSum)   sessionEarnings += playerBet;
-        else if (playerSum < dealerSum)                     sessionEarnings -= playerBet;
+        if (bust)                                           { sessionEarnings -= playerBet;                     stateText.text = "BUST"; }
+        else if (blackJack && dealerSum != 21)              { sessionEarnings += (int)(playerBet * 1.5f);       stateText.text = "BLACKJACK"; }
+        else if (dealerSum > 21 || playerSum > dealerSum)   { sessionEarnings += playerBet;                     stateText.text = "WIN"; }
+        else if (playerSum < dealerSum)                     { sessionEarnings -= playerBet;                     stateText.text = "DEALER WINS"; }
+        else                                                {                                                   stateText.text = "PUSH"; }
     }
 
     private void EvaluatePlayerSum() {
         playerSum = 0;
 
         foreach (Card card in playerCards) {
-            if (card.name[0] == 'A') {
+            if (card.name[0] == 'A') { 
                 if (playerSum + card.value > 21) playerSum += 1;
                 else playerSum += card.value;
                 continue;
@@ -161,6 +219,7 @@ public class BlackJack : MonoBehaviour {
         dealerSum = 0;
 
         foreach (Card card in dealerCards) {
+            if (card.hidden) continue;
             if (card.name[0] == 'A') {
                 if (dealerSum + card.value > 21) dealerSum += 1;
                 else dealerSum += card.value;
@@ -169,5 +228,38 @@ public class BlackJack : MonoBehaviour {
 
             dealerSum += card.value;
         }
+    }
+
+    private void UpdateResolve(float dt) { resolveTimer += dt; if (resolveTimer >= 1f) againButton.SetActive(true); }
+
+    private void RevealCard(int index) {
+        if (index >= dealerCardUIs.Count) return;
+        var cui = dealerCardUIs[index];
+        cui.obj.GetComponent<Image>().sprite = Resources.Load<Sprite>("Cards/" + cui.card.name);
+    }
+
+    private void AddCardToUI(Card card, Transform transform, bool player) {
+        var cardSprite = Resources.Load<Sprite>(card.hidden ? "Cards/back" : "Cards/" + card.name);
+        var obj = Instantiate(cardPrefab, transform);
+
+        if (player) {
+            int n = playerCards.Count;
+            float totalWidth = (n - 1) * cardOffset + cardWidth;
+            playerHand.transform.localPosition = new Vector3(-totalWidth / 2 / 16f, playerHand.transform.localPosition.y, 0);
+            obj.transform.localPosition = new Vector3((n - 1) * cardOffset, 0, 0);
+        }
+        else {
+            int n = dealerCards.Count;
+            float totalWidth = (n - 1) * cardOffset + cardWidth;
+            dealerHand.transform.localPosition = new Vector3(-totalWidth / 2 / 16f, dealerHand.transform.localPosition.y, 0);
+            obj.transform.localPosition = new Vector3((n - 1) * cardOffset, 0, 0);
+            dealerCardUIs.Add(new CardUI { card = card, obj = obj });
+        }
+        obj.GetComponent<Image>().sprite = cardSprite;
+    }
+
+    private void DestroyCards() {
+        foreach (Transform child in playerCardStart.transform) Destroy(child.gameObject);
+        foreach (Transform child in dealerCardStart.transform) Destroy(child.gameObject);
     }
 }
