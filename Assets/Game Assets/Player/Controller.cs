@@ -12,7 +12,7 @@ public class Controller : MonoBehaviour
 
 
     private Rigidbody2D rb;
-    private float moveSpeed = 5f;
+    private float moveSpeed = 8f;
 
     void OnEnable()
     {
@@ -24,8 +24,6 @@ public class Controller : MonoBehaviour
         up_down.Enable();
 
         rb = GetComponent<Rigidbody2D>();
-
-
     }
 
    
