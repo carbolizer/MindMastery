@@ -17,7 +17,7 @@ public class ThreeCardGameManager : MonoBehaviour
 
     [Header("Cheat Mechanics UI")]
     public Slider suspicionBar;
-    public TextMeshProUGUI suspicionPercentageText; // NEW: The percentage text
+    public TextMeshProUGUI suspicionPercentageText; // The percentage text
     public int peekPenalty = 34; // Amount sent to GlobalGameManager
 
     [Header("UI References")]
