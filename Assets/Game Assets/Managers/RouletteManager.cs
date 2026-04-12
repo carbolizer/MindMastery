@@ -15,6 +15,8 @@ public class RouletteManager : MonoBehaviour
 
     public GameObject[] Cells;
     public List<GameObject> ExtraCells;
+    public Dictionary<AssociatedNumberMode, RouletteTableEntry> RouletteTable = new Dictionary<AssociatedNumberMode, RouletteTableEntry>();
+
 
     void Awake()
     {
