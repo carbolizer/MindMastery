@@ -109,7 +109,7 @@ public class GlobalGameManager : MonoBehaviour
     void Update()
     {
 
-        if (Player.m_money < 10)
+        if (Player.m_money < 10 && currentGame == CurrentGame.None)
         {
             Player.m_state = PlayerSpecialState.Broke;
         }
@@ -337,7 +337,12 @@ public class GlobalGameManager : MonoBehaviour
     {
         if (swapData == null) return;
 
-        // Grab the enum value and trigger the exact same fade animation
+        // If heading back to the roaming casino, reset the game state
+        if (swapData.ToScene == GameScenes.Default)
+        {
+            currentGame = CurrentGame.None;
+        }
+
         int newScene = (int)swapData.ToScene;
         FadeOutObj.GetComponent<FadeOutFuncs>().animator.SetInteger("SceneID", newScene);
         FadeOutObj.GetComponent<FadeOutFuncs>().animator.SetBool("SwitchScene", true);
@@ -371,7 +376,7 @@ public enum PlayerSpecialState
 public class PlayerData
 {
     public Dictionary<int, PokerChip> m_chips = new Dictionary<int, PokerChip>();
-    public float m_money = 20; //Directly replated to chips
+    public float m_money = 200; //Directly replated to chips
     public float m_suspicion = 0; //0%-100%
     //AKA Accuracy of powers
     public float m_sobriety = 100; //0%-100%
