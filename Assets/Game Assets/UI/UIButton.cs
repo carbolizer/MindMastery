@@ -123,7 +123,8 @@ public class UIButton : MonoBehaviour
         }
         else
         {
-            Debug.LogError($"Method {methodName} not found on GlobalGameManager");
+            ClickFunction?.Invoke();
+            //Debug.LogError($"Method {methodName} not found on GlobalGameManager");
         }
     }
 }

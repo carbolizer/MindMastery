@@ -68,5 +68,5 @@
         "*.slnx": "*.csproj"
     },
     "State-of-Mind.slnx=======dotnet.defaultSolution": "MindMastery.slnx>>>>>>>harrison-dev",
-    "dotnet.defaultSolution": "MindMastery.slnx"
+    "dotnet.defaultSolution": "State-of-Mind.slnx"
 }

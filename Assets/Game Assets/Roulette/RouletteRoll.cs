@@ -132,15 +132,20 @@ public class RouletteRoll : MonoBehaviour
 
     public void PreRoll()
     {
+        RouletteManager.Instance.UsedPowersThisRound = false;
         RouletteManager.Instance.WinningCells.Clear();
 
         
         lastWin = UnityEngine.Random.Range(0, RouletteNums);
 
-        for (int i = 0; i < 11; i++)
+        foreach (AssociatedNumberMode mode in Enum.GetValues(typeof(AssociatedNumberMode)))
         {
-            RouletteTable[(AssociatedNumberMode)i].m_wonNextRoll = RouletteTable[(AssociatedNumberMode)i].DidWin(lastWin);
-        } 
+            if (RouletteTable.ContainsKey(mode))
+            {
+                RouletteTable[mode].m_wonNextRoll =
+                    RouletteTable[mode].DidWin(lastWin);
+            }
+        }
 
         foreach (var obj in RouletteManager.Instance.Cells)
         {
@@ -149,15 +154,15 @@ public class RouletteRoll : MonoBehaviour
 
             var RC = obj.GetComponent<RouletteCell>();
 
-            if ((int)obj.GetComponent<RouletteCell>().Cell == lastWin)
+            if ((int)obj.GetComponent<RouletteCell>().Cell == lastWin && RouletteManager.Instance.poswersOn)
             {
                 
                 RouletteManager.Instance.WinningCells.Add(obj);
                 RC.doesWinNext = true;
 
                 //Debug
-                obj.GetComponent<SpriteRenderer>().color = Color.blue;
-                //obj.GetComponent<SpriteRenderer>().enabled = true;
+                obj.GetComponent<SpriteRenderer>().color = Color.purple;
+                obj.GetComponent<SpriteRenderer>().enabled = true;
 
             } else
             {
@@ -176,14 +181,14 @@ public class RouletteRoll : MonoBehaviour
 
             var RC = obj.GetComponent<RouletteCell>();
 
-            if (RouletteTable[(AssociatedNumberMode)(int)RC.Cell - 37].m_wonNextRoll)
+            if (RouletteTable[(AssociatedNumberMode)(int)RC.Cell - 37].m_wonNextRoll && RouletteManager.Instance.poswersOn)
             {
                 RouletteManager.Instance.WinningCells.Add(obj);
                 RC.doesWinNext = true;
 
                 //Debug
-                obj.GetComponent<SpriteRenderer>().color = Color.blue;
-                //obj.GetComponent<SpriteRenderer>().enabled = true;
+                obj.GetComponent<SpriteRenderer>().color = Color.purple;
+                obj.GetComponent<SpriteRenderer>().enabled = true;
             } else
             {
                 obj.GetComponent<SpriteRenderer>().color = Color.white;
@@ -193,6 +198,7 @@ public class RouletteRoll : MonoBehaviour
         }
         
         //Debug.Log(lastWin);
+        RouletteManager.Instance.RefreshLabelWinStates();
 
     }
 
@@ -253,9 +259,10 @@ public class RouletteRoll : MonoBehaviour
         
         if (RouletteManager.Instance.UsedPowersThisRound)
         {
-            GlobalGameManager.Player.m_suspicion += 10;
+            GlobalGameManager.Player.m_suspicion += 15;
+            GlobalGameManager.Player.m_sobriety -= 20;
         }
-        RouletteManager.Instance.UsedPowersThisRound = false;
+        
         GlobalGameManager.Instance.DestroyChipsOnTable();
         Debug.Log("Money after roll: " + GlobalGameManager.Player.m_money);
         GlobalGameManager.Player.RefreshChipCount();

@@ -2081,6 +2081,7 @@ GameObject:
   - component: {fileID: 1006415792}
   - component: {fileID: 1006415793}
   - component: {fileID: 1006415794}
+  - component: {fileID: 1006415795}
   - component: {fileID: 1006415791}
   - component: {fileID: 1006415790}
   m_Layer: 0
@@ -2163,7 +2164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 602107c929f26264ca5ad0063f49fbe9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButton
-  m_outlineColor: {r: 1, g: 0.88235295, b: 0, a: 1}
+  m_outlineColor: {r: 0, g: 0.8746934, b: 1, a: 1}
   m_outlineWidth: 0.35
   ClickFunction:
     m_PersistentCalls:
@@ -2264,6 +2265,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneSwap
   ToScene: 3
+--- !u!114 &1006415795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1006415788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3301ca9283b9cd468b1a22df4946f8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Tooltip
+  m_tooltip: 3 card poker
+  m_baseColor: {r: 0, g: 0.8784314, b: 1, a: 1}
+  m_outlineColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1 &1016728068
 GameObject:
   m_ObjectHideFlags: 0
@@ -2355,6 +2371,7 @@ GameObject:
   - component: {fileID: 1021062408}
   - component: {fileID: 1021062412}
   - component: {fileID: 1021062413}
+  - component: {fileID: 1021062414}
   - component: {fileID: 1021062410}
   - component: {fileID: 1021062411}
   m_Layer: 0
@@ -2538,6 +2555,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneSwap
   ToScene: 2
+--- !u!114 &1021062414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1021062405}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3301ca9283b9cd468b1a22df4946f8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Tooltip
+  m_tooltip: Blackjack
+  m_baseColor: {r: 1, g: 0.88235295, b: 0, a: 1}
+  m_outlineColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1 &1093831228
 GameObject:
   m_ObjectHideFlags: 0
@@ -3590,6 +3622,7 @@ GameObject:
   - component: {fileID: 1599693468}
   - component: {fileID: 1599693471}
   - component: {fileID: 1599693472}
+  - component: {fileID: 1599693474}
   - component: {fileID: 1599693473}
   - component: {fileID: 1599693470}
   - component: {fileID: 1599693469}
@@ -3774,6 +3807,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneSwap
   ToScene: 2
+--- !u!114 &1599693474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1599693467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3301ca9283b9cd468b1a22df4946f8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Tooltip
+  m_tooltip: Blackjack
+  m_baseColor: {r: 1, g: 0.88235295, b: 0, a: 1}
+  m_outlineColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1 &1604762243 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2373227271793765305, guid: 890e27d4e2e037444a155912eaf14fef, type: 3}
@@ -4948,6 +4996,7 @@ GameObject:
   - component: {fileID: 2004362739}
   - component: {fileID: 2004362740}
   - component: {fileID: 2004362741}
+  - component: {fileID: 2004362742}
   - component: {fileID: 2004362738}
   - component: {fileID: 2004362737}
   m_Layer: 0
@@ -5030,7 +5079,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 602107c929f26264ca5ad0063f49fbe9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButton
-  m_outlineColor: {r: 1, g: 0.88235295, b: 0, a: 1}
+  m_outlineColor: {r: 0, g: 0.8784314, b: 1, a: 1}
   m_outlineWidth: 0.35
   ClickFunction:
     m_PersistentCalls:
@@ -5131,6 +5180,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneSwap
   ToScene: 3
+--- !u!114 &2004362742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2004362735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3301ca9283b9cd468b1a22df4946f8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Tooltip
+  m_tooltip: 3 card poker
+  m_baseColor: {r: 0, g: 0.8784314, b: 1, a: 1}
+  m_outlineColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1 &2011234074
 GameObject:
   m_ObjectHideFlags: 0

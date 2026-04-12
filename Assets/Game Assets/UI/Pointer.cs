@@ -1,3 +1,5 @@
+using Mono.Cecil;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 
@@ -34,6 +36,7 @@ public class Pointer : MonoBehaviour
     {
         if (GlobalGameManager.Instance.HoveredObject != null && GlobalGameManager.Instance.HoveredObject.TryGetComponent(out Tooltip tooltip))
         {  
+            Label.GetComponent<TMPro.TextMeshPro>().font = Resources.Load<TMP_FontAsset>("Fonts/pixel SDF");
             Label.GetComponent<TMPro.TextMeshPro>().text = tooltip.m_tooltip;
             Label.GetComponent<TMPro.TextMeshPro>().color = tooltip.m_baseColor;
             Label.GetComponent<TMPro.TextMeshPro>().outlineColor = tooltip.m_outlineColor;

@@ -127,9 +127,9 @@ public class GlobalGameManager : MonoBehaviour
         SusLabel = GameObject.Find("Label2");
         MoneyLabel = GameObject.Find("Label3");
 
-        if (MindLabel != null)  MindLabel.GetComponent<TextMeshPro>().text = $"mind {Player.m_sobriety}%";
-        if (SusLabel != null) SusLabel.GetComponent<TextMeshPro>().text = $"suspicion {Player.m_suspicion}%";
-        if (MoneyLabel != null) MoneyLabel.GetComponent<TextMeshPro>().text = $"mind ${Player.m_money}";
+        if (MindLabel != null)  MindLabel.GetComponent<TextMeshPro>().text = $"mind {(int)Player.m_sobriety}%";
+        if (SusLabel != null) SusLabel.GetComponent<TextMeshPro>().text = $"suspicion {(int)Player.m_suspicion}%";
+        if (MoneyLabel != null) MoneyLabel.GetComponent<TextMeshPro>().text = $"money ${(int)Player.m_money}";
 
 
         switch (Player.m_state)
