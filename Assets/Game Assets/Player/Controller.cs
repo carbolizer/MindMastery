@@ -9,6 +9,8 @@ public class Controller : MonoBehaviour
     private InputAction left_right;
     private InputAction up_down;
 
+    private Animator animator;
+
 
 
     private Rigidbody2D rb;
@@ -24,6 +26,8 @@ public class Controller : MonoBehaviour
         up_down.Enable();
 
         rb = GetComponent<Rigidbody2D>();
+
+        animator = transform.GetChild(1).GetComponent<Animator>();
     }
 
    
@@ -33,8 +37,10 @@ public class Controller : MonoBehaviour
         float x = left_right.ReadValue<float>();
         float y = up_down.ReadValue<float>();
 
-        Debug.Log("x: " + x + " y: " + y);
+        animator.SetInteger("Up-Down", (int)y);
+        animator.SetInteger("Left-Right", (int)x);
 
-        rb.transform.position += new Vector3(x, y, rb.transform.position.z) * Time.deltaTime * moveSpeed;
+        Vector2 move = new Vector2(x, y);
+        rb.linearVelocity = move * moveSpeed;
     }
 }

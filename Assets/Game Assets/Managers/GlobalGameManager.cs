@@ -14,6 +14,7 @@ public enum CurrentGame
 
 
 
+
 public class GlobalGameManager : MonoBehaviour
 {
     public static GlobalGameManager Instance { get; private set; }
@@ -33,6 +34,12 @@ public class GlobalGameManager : MonoBehaviour
     public List<GameObject> ChipsOnTable;
 
     public bool DisableChipHover = false;
+    [System.NonSerialized]
+    public float GrabDistanceThreshold = 5.0f;
+    [System.NonSerialized]
+    public float DrinkTimer = 0;
+    public bool CanDrink = true;
+
 
     public void DestroyChipsOnTable()
     {
@@ -62,7 +69,23 @@ public class GlobalGameManager : MonoBehaviour
 
     void Update()
     {
-        UpdateHoverList();
+        switch (Player.m_state)
+        {
+            case PlayerSpecialState.None:
+            UpdateHoverList();
+            UpdateSobriety();
+            UpdateSuspicion();
+            break;
+
+            case PlayerSpecialState.Criminal:
+
+            break;
+
+            case PlayerSpecialState.Drunk:
+
+            break;
+        }
+        
     }
 
     private void InitializeChips()
@@ -127,11 +150,58 @@ public class GlobalGameManager : MonoBehaviour
         HoveredObjects.Remove(obj);
     }
 
+    public void UpdateSuspicionBy(int amount)
+    {
+        if (Player.m_suspicion + amount >= 100)
+        {
+            Player.m_suspicion = 100;
+            Player.m_state = PlayerSpecialState.Criminal;
+            Debug.Log("Player Caught! Game Over");
+        } else if (Player.m_suspicion + amount < 0)
+        {
+            Player.m_suspicion = 0;
+        } else
+        {
+            Player.m_suspicion += amount;
+        }
+        
+    }
 
+    public void UpdateSobriety()
+    {
+        if (Instance.DrinkTimer <= 0 && Player.m_sobriety < 100)
+        {
+            Player.m_sobriety += Time.deltaTime / 2; //Regen 1 sobriety every 2 sec
+        }
+
+        if (Player.m_sobriety > 100)
+        {
+            Player.m_sobriety = 100;
+        }
+    }
+
+    public void UpdateSuspicion()
+    {
+        if (Player.m_suspicion > 0)
+        {
+            Player.m_suspicion -= Time.deltaTime / 5; //Naturally lose 1 sus every 5 sec
+        }
+
+        if (Player.m_suspicion < 0)
+        {
+            Player.m_suspicion = 0;
+        }
+    }
     
 
 }
 
+public enum PlayerSpecialState
+{
+    None,
+    Drunk,
+    Criminal
+}
 
 
 public class PlayerData
@@ -141,6 +211,9 @@ public class PlayerData
     public float m_suspicion = 0; //0%-100%
     //AKA Accuracy of powers
     public float m_sobriety = 100; //0%-100%
+
+    //Do we make the game over if you are fully drunk?
+    public PlayerSpecialState m_state = PlayerSpecialState.None;
 
 
     public bool m_usingCheats = false;
