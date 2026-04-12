@@ -31,6 +31,9 @@ public enum ChipType
 public class Chip : MonoBehaviour
 {   
     [SerializeField]
+    private Material ColorMat;
+
+    [SerializeField]
     public GameObject ClosestTile = null;
 
     public ChipState m_state = ChipState.Lazy;
@@ -49,66 +52,70 @@ public class Chip : MonoBehaviour
 
     void Start()
     {
-        RefreshValue();
+        RefreshColorValue();
         m_state = ChipState.Lazy;
         GetComponent<UIButton>().ClickFunction.AddListener(OnDragStart);
+        GetComponent<SpriteRenderer>().enabled = true;
     }
 
 
 
-    void RefreshValue()
+    void RefreshColorValue()
     {
-        //Pick a new sprite based on value
-        var sr = GetComponent<SpriteRenderer>();
+        var mat1 = GetComponent<SpriteRenderer>().material;
+        Color col = new Color();
 
         switch (m_value)
         {
             case ChipType.Ten:
-                sr.color = Color.white;
+                col = Color.deepPink;
                 break;
             case ChipType.Twenty:
-                sr.color = Color.blue;
+                col = Color.blue;
                 break;
             case ChipType.Fifty:
-                sr.color = Color.red;
+                col = Color.red;
                 break;
             case ChipType.OneHundered:
-                sr.color = Color.yellow;
+                col = Color.yellow;
                 break;
             case ChipType.TwoHunderedFifty:
-                sr.color = Color.yellowGreen;
+                col = Color.yellowGreen;
                 break;
             case ChipType.FiveHundered:
-                sr.color = Color.orange;
+                col = Color.orange;
                 break;
             case ChipType.SevenHundered:
-                sr.color = Color.purple;
+                col = Color.purple;
                 break;
             case ChipType.OneThousand:
-                sr.color = Color.teal;
+                col = Color.teal;
                 break;
             case ChipType.OneThousandFiveHundered:
-                sr.color = Color.tan;
+                col = Color.tan;
                 break;
             case ChipType.ThreeThousand:
-                sr.color = Color.violet;
+                col = Color.violet;
                 break;
             case ChipType.FourThousand:
-                sr.color = Color.navyBlue;
+                col = Color.navyBlue;
                 break;
             case ChipType.FiveThousand:
-                sr.color = Color.brown;
+                col = Color.brown;
                 break;
             case ChipType.TenThousand:
-                sr.color = Color.cornsilk;
+                col = Color.cornsilk;
                 break;
             case ChipType.FiftyThousand:
-                sr.color = Color.aquamarine;
+                col = Color.aquamarine;
                 break;
             case ChipType.OneHunderedThousand:
-                sr.color = Color.black;
+                col = Color.black;
                 break;
         }
+        ColorMat.SetColor("_Color", col);
+        mat1.SetTexture("_MainTex", ColorMat.GetTexture("_MainTex"));
+        GetComponent<SpriteRenderer>().materials = new Material[] { mat1, ColorMat };
     }
 
     
@@ -140,7 +147,11 @@ public class Chip : MonoBehaviour
             switch (m_state)
             {
                 case ChipState.Lazy:
-                transform.position = m_parentOffset + m_posParent.transform.position;
+                transform.position = new Vector3(
+                    m_parentOffset.x + m_posParent.transform.position.x,
+                    m_parentOffset.y + m_posParent.transform.position.y,
+                    -25
+                    );
                 break;
 
                 case ChipState.Held:
@@ -163,15 +174,24 @@ public class Chip : MonoBehaviour
                 if (m_hovered)
                 {
                     m_state = ChipState.Held;
-                    GlobalGameManager.Player.m_chips[(int)m_value].m_amount -= 1;
+                    //GlobalGameManager.Player.m_chips[(int)m_value].m_amount -= 1;
                 } else
                 {
-                    transform.position = m_parentOffset + m_posParent.transform.position;
+                    transform.position = new Vector3(
+                        m_parentOffset.x + m_posParent.transform.position.x,
+                        m_parentOffset.y + m_posParent.transform.position.y,
+                        -25
+                    );
+                    
                 }
                 break;
 
                 case ChipState.Held:
-                transform.position = GlobalGameManager.Instance.CursorPos - ClickStartOffset;
+                transform.position = new Vector3(
+                    GlobalGameManager.Instance.CursorPos.x - ClickStartOffset.x,
+                    GlobalGameManager.Instance.CursorPos.y - ClickStartOffset.y,
+                    -25
+                );
                 break;
 
                 case ChipState.OnTable:
@@ -249,7 +269,7 @@ public class Chip : MonoBehaviour
     {   
         if (collision.gameObject.name == "TableHB")
         {
-            RouletteManager.Instance.ChipsOnTable.Add(gameObject);
+            GlobalGameManager.Instance.ChipsOnTable.Add(gameObject); 
             m_onTable = true;
         }
         if (collision.gameObject.name == "ChipBox")
@@ -264,7 +284,7 @@ public class Chip : MonoBehaviour
     {
         if (collision.gameObject.name == "TableHB")
         {
-            RouletteManager.Instance.ChipsOnTable.Remove(gameObject);
+            GlobalGameManager.Instance.ChipsOnTable.Remove(gameObject);
             m_onTable = false;
             ClosestTile = null;
             

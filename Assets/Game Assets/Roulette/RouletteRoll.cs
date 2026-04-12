@@ -184,7 +184,7 @@ public class RouletteRoll : MonoBehaviour
 
         GlobalGameManager.Player.m_money -= bet;
 
-        foreach (var chip in RouletteManager.Instance.ChipsOnTable)
+        foreach (var chip in GlobalGameManager.Instance.ChipsOnTable)
         {   
             bet += (int)chip.GetComponent<Chip>().m_value;
             GameObject cell = chip.GetComponent<Chip>().ClosestTile;
@@ -214,7 +214,7 @@ public class RouletteRoll : MonoBehaviour
             
         }
         
-        var list = RouletteManager.Instance.ChipsOnTable;
+        var list = GlobalGameManager.Instance.ChipsOnTable;
 
         for (int i = list.Count - 1; i >= 0; i--)
         {

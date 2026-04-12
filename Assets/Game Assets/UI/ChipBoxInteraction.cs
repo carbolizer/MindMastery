@@ -48,20 +48,23 @@ public class ChipBoxInteraction : MonoBehaviour
             }
 
             var chipData = GlobalGameManager.Player.m_chips[(int)item.chipType];
+            
 
             if (chipData.m_amount > 0)
             {
                 Vector3 pos = new Vector3(item.position.x, item.position.y + 4, -24);
 
                 GameObject obj = Instantiate(ChipPrefab, pos, Quaternion.identity);
-                
+                obj.GetComponent<SpriteRenderer>().enabled = false;
+                obj.transform.parent = GameObject.Find("ChipsContainer").transform;
                 var chipComponent = obj.GetComponent<Chip>();
                 chipComponent.m_posParent = parent.gameObject;
                 chipComponent.m_value = item.chipType;
                 chipComponent.m_parentOffset = pos;
+                chipData.m_amount -=  1;
 
                 spawnedChips[i] = obj;
-
+                obj.GetComponent<SpriteRenderer>().enabled = true;
      
             }
         }
@@ -73,7 +76,7 @@ public class ChipBoxInteraction : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         RefreshChips();
     }

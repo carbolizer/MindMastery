@@ -19,7 +19,7 @@ public class GenericUI : MonoBehaviour
     {
         cam = Camera.main;
         AlivePP = Instantiate(PointerPrefab, transform);
-        AlivePP.transform.position = new Vector3(transform.position.x - 0.9f, transform.position.y - 0.7f, transform.position.z);
+        AlivePP.transform.position = new Vector3(transform.position.x - 0.37f, transform.position.y - 0.0333f, transform.position.z);
         Cursor.visible = false;
         GlobalGameManager.Instance.CursorState = CursorState.UP;
 
@@ -41,6 +41,7 @@ public class GenericUI : MonoBehaviour
         Vector3 point = cam.ScreenToWorldPoint(
             new Vector3(mousePos.x, mousePos.y, cam.nearClipPlane)
         );
+        point.z = -50;
         GlobalGameManager.Instance.CursorPos = point;
         transform.position = point;
 

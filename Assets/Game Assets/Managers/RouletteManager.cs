@@ -8,7 +8,7 @@ public class RouletteManager : MonoBehaviour
     [SerializeField]
     private GameObject TableHB;
 
-    public List<GameObject> ChipsOnTable;
+    
 
 
     public GameObject[] Cells;

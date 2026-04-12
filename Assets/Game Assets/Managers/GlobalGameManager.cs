@@ -26,10 +26,11 @@ public class GlobalGameManager : MonoBehaviour
 
     public GameObject HoveredObject = null;
     public bool HoveringObject = false;
-    
+
     //Internal logic use only; used to determine HoveredObject
     [SerializeField]
     private List<GameObject> HoveredObjects = new List<GameObject>();
+    public List<GameObject> ChipsOnTable;
 
 
 
