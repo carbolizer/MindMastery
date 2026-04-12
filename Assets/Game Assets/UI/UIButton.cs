@@ -115,6 +115,8 @@ public class UIButton : MonoBehaviour
             BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
         );
 
+        
+
         if (method != null)
         {
             method.Invoke(gm, null);

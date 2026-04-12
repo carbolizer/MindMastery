@@ -20,13 +20,13 @@ public class Pointer : MonoBehaviour
 
     public void ClickDown()
     {
-        if (onSpr != null)
+        if (onSpr != null && sr != null)
             sr.sprite = onSpr;
     }
 
     public void ClickRelease()
     {
-        if (offSpr != null)
+        if (offSpr != null && sr != null)
             sr.sprite = offSpr;
     }
 

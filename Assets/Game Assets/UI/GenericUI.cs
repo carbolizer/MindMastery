@@ -40,16 +40,19 @@ public class GenericUI : MonoBehaviour
         transform.position = point;
 
         
-
-        if (Mouse.current.leftButton.isPressed)
+        if (pointer != null)
         {
-            pointer.ClickDown();
-            GlobalGameManager.Instance.CursorState = CursorState.DOWN;
-        } else
-        {
-            pointer.ClickRelease();
-            GlobalGameManager.Instance.CursorState = CursorState.UP;
+            if (Mouse.current.leftButton.isPressed)
+            {
+                pointer.ClickDown();
+                GlobalGameManager.Instance.CursorState = CursorState.DOWN;
+            } else
+            {
+                pointer.ClickRelease();
+                GlobalGameManager.Instance.CursorState = CursorState.UP;
+            }
         }
+        
 
         transform.position = point;
 

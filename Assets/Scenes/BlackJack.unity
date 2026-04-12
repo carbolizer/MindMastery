@@ -257,8 +257,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: $100
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 7a7be8fe49d284beb816b9d36f0f2492, type: 2}
-  m_sharedMaterial: {fileID: 1780009200622910641, guid: 7a7be8fe49d284beb816b9d36f0f2492, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: c002b6c135b136c4281fc9f4dd46617a, type: 2}
+  m_sharedMaterial: {fileID: -9200799303536489418, guid: c002b6c135b136c4281fc9f4dd46617a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -355,7 +355,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 1780009200622910641, guid: 7a7be8fe49d284beb816b9d36f0f2492, type: 2}
+  - {fileID: -9200799303536489418, guid: c002b6c135b136c4281fc9f4dd46617a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1599,7 +1599,7 @@ MonoBehaviour:
   m_text: 12
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c002b6c135b136c4281fc9f4dd46617a, type: 2}
-  m_sharedMaterial: {fileID: 6598671033255775927, guid: c002b6c135b136c4281fc9f4dd46617a, type: 2}
+  m_sharedMaterial: {fileID: -9200799303536489418, guid: c002b6c135b136c4281fc9f4dd46617a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1696,7 +1696,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 6598671033255775927, guid: c002b6c135b136c4281fc9f4dd46617a, type: 2}
+  - {fileID: -9200799303536489418, guid: c002b6c135b136c4281fc9f4dd46617a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2824,6 +2824,9 @@ MonoBehaviour:
   ChipsOnTable: []
   DisableChipHover: 0
   CanDrink: 1
+  MindLabel: {fileID: 0}
+  SusLabel: {fileID: 0}
+  MoneyLabel: {fileID: 0}
   CurrentScene: 0
 --- !u!4 &1165922339
 Transform:
@@ -3574,7 +3577,7 @@ MonoBehaviour:
   m_text: DEALER WINS
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c002b6c135b136c4281fc9f4dd46617a, type: 2}
-  m_sharedMaterial: {fileID: 6598671033255775927, guid: c002b6c135b136c4281fc9f4dd46617a, type: 2}
+  m_sharedMaterial: {fileID: -9200799303536489418, guid: c002b6c135b136c4281fc9f4dd46617a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3671,7 +3674,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 6598671033255775927, guid: c002b6c135b136c4281fc9f4dd46617a, type: 2}
+  - {fileID: -9200799303536489418, guid: c002b6c135b136c4281fc9f4dd46617a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3864,7 +3867,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: $100
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 7a7be8fe49d284beb816b9d36f0f2492, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: c002b6c135b136c4281fc9f4dd46617a, type: 2}
   m_sharedMaterial: {fileID: 1780009200622910641, guid: 7a7be8fe49d284beb816b9d36f0f2492, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -3931,7 +3934,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1418374121
@@ -4655,7 +4658,7 @@ MonoBehaviour:
   m_text: 12
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c002b6c135b136c4281fc9f4dd46617a, type: 2}
-  m_sharedMaterial: {fileID: 6598671033255775927, guid: c002b6c135b136c4281fc9f4dd46617a, type: 2}
+  m_sharedMaterial: {fileID: -9200799303536489418, guid: c002b6c135b136c4281fc9f4dd46617a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -4752,7 +4755,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 6598671033255775927, guid: c002b6c135b136c4281fc9f4dd46617a, type: 2}
+  - {fileID: -9200799303536489418, guid: c002b6c135b136c4281fc9f4dd46617a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

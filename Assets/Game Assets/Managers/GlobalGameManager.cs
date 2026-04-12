@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections;
 using Unity.VisualScripting;
 using System.Linq;
+using TMPro;
 
 
 
@@ -57,6 +58,10 @@ public class GlobalGameManager : MonoBehaviour
     [System.NonSerialized]
     public float DrinkTimer = 0;
     public bool CanDrink = true;
+
+    public GameObject MindLabel;
+    public GameObject SusLabel;
+    public GameObject MoneyLabel;
 
 
 
@@ -118,6 +123,13 @@ public class GlobalGameManager : MonoBehaviour
         {
             Player.m_state = PlayerSpecialState.Drunk;
         }
+        MindLabel = GameObject.Find("Label1");
+        SusLabel = GameObject.Find("Label2");
+        MoneyLabel = GameObject.Find("Label3");
+
+        if (MindLabel != null)  MindLabel.GetComponent<TextMeshPro>().text = $"mind {Player.m_sobriety}%";
+        if (SusLabel != null) SusLabel.GetComponent<TextMeshPro>().text = $"suspicion {Player.m_suspicion}%";
+        if (MoneyLabel != null) MoneyLabel.GetComponent<TextMeshPro>().text = $"mind ${Player.m_money}";
 
 
         switch (Player.m_state)
@@ -147,6 +159,30 @@ public class GlobalGameManager : MonoBehaviour
             Instance.FadeOutObj.GetComponent<FadeOutFuncs>().animator.SetBool("GameLose", true);
             PlayLoseAnim = false;
         }
+        
+    }
+
+    public void OnDrink()
+    {
+        int drinkAmount = Random.Range(2, 15);
+        int susAmount = Random.Range(3, 13);
+
+
+        GlobalGameManager.Instance.DrinkTimer = 10;
+        GlobalGameManager.Instance.CanDrink = false;
+
+        if (GlobalGameManager.Player.m_sobriety >= drinkAmount)
+        {
+            GlobalGameManager.Player.m_sobriety -= drinkAmount;
+            GlobalGameManager.Player.m_suspicion -= susAmount;
+            Debug.Log($"Drink drank: -{drinkAmount} sobriety, -{susAmount} suspicion");
+        } else
+        {
+            GlobalGameManager.Player.m_sobriety = 0;
+            GlobalGameManager.Player.m_state = PlayerSpecialState.Drunk;
+            Debug.Log("Player Drunk! Game Over");
+        }
+        
         
     }
 
