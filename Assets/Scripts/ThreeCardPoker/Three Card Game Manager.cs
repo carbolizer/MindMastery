@@ -1,134 +1,177 @@
 using UnityEngine;
-using System.Collections.Generic;
-using TMPro;
+using System.Collections; // Required for Coroutines
+using System.Collections.Generic; // Required for List<>
+using TMPro; // Required for TextMeshPro
 
 public class ThreeCardGameManager : MonoBehaviour
 {
-    public enum GameState { Ante, Decision, Showdown }
-    public GameState currentState;
+    public enum GameState { Ante, Decision, Showdown } //
+    public GameState currentState; //
 
     [Header("Game Settings")]
-    public int bank = 1000;
-    public int anteBet = 10;
-    public int pairPlusBet = 0; // The side bet amount
-    public int pairPlusIncrement = 10;
+    public int bank = 1000; //
+    public int anteBet = 10; //
+    public int pairPlusBet = 0; //
+    public int pairPlusIncrement = 10; //
+    public float cardDelay = 0.25f; //
 
-    [Header("UI Text References")]
-    public TextMeshProUGUI bankText;
-    public TextMeshProUGUI statusText;
+    [Header("UI References")]
+    public TextMeshProUGUI bankText; //
+    public TextMeshProUGUI statusText; //
+    public GameObject pairPlusButton; // Drag the Pair Plus Button GameObject here
 
     [Header("Visual References")]
-    public CardVisual[] playerCardVisuals;
-    public CardVisual[] dealerCardVisuals;
+    public CardVisual[] playerCardVisuals; //
+    public CardVisual[] dealerCardVisuals; //
 
-    private PokerDeck deck;
-    private List<PokerCard> playerHand = new List<PokerCard>();
-    private List<PokerCard> dealerHand = new List<PokerCard>();
+    private PokerDeck deck; //
+    private List<PokerCard> playerHand = new List<PokerCard>(); //
+    private List<PokerCard> dealerHand = new List<PokerCard>(); //
 
-    void Start() { StartGame(); }
+    void Start() { StartGame(); } //
 
     public void StartGame()
     {
-        deck = new PokerDeck();
-        playerHand.Clear();
-        dealerHand.Clear();
-        foreach (var card in playerCardVisuals) card.SetCard(null, false);
-        foreach (var card in dealerCardVisuals) card.SetCard(null, false);
-        currentState = GameState.Ante;
-        UpdateUI("Place your Ante and Pair Plus bets.");
+        deck = new PokerDeck(); //
+        playerHand.Clear(); //
+        dealerHand.Clear(); //
+
+        // Reset Visuals
+        foreach (var card in playerCardVisuals) card.SetCard(null, false); //
+        foreach (var card in dealerCardVisuals) card.SetCard(null, false); //
+
+        pairPlusBet = 0;
+
+        // Ensure the side-bet button is available for a new hand
+        if (pairPlusButton != null) pairPlusButton.SetActive(true);
+
+        currentState = GameState.Ante; //
+        UpdateUI("Place your Ante and Pair Plus bets."); //
     }
 
-    // New method for the Pair Plus button
     public void TogglePairPlus()
     {
-        if (currentState != GameState.Ante) return;
+        if (currentState != GameState.Ante) return; //
 
-        // Simple toggle: 0 or 10. You could also make this increment.
-        if (pairPlusBet == 0) pairPlusBet = pairPlusIncrement;
-        else pairPlusBet = 0;
+        if (pairPlusBet == 0)
+        {
+            if (bank >= pairPlusIncrement)
+            {
+                pairPlusBet = pairPlusIncrement;
+                bank -= pairPlusBet;
+                UpdateUI("Pair Plus Active: $" + pairPlusBet);
 
-        UpdateUI(pairPlusBet > 0 ? "Pair Plus Active: $" + pairPlusBet : "Pair Plus Disabled.");
+                // Hide button immediately after betting
+                if (pairPlusButton != null) pairPlusButton.SetActive(false);
+            }
+            else
+            {
+                UpdateUI("Not enough bank for Pair Plus!"); //
+            }
+        }
     }
 
     public void Deal()
     {
-        if (currentState != GameState.Ante) return;
+        if (currentState != GameState.Ante) return; //
+        if (bank < anteBet) { UpdateUI("Not enough bank for Ante!"); return; } //
 
-        // Subtract both bets at once
-        bank -= (anteBet + pairPlusBet);
+        bank -= anteBet;
 
-        playerHand.Clear();
-        dealerHand.Clear();
+        // Hide side-bet button if the player deals without betting Pair Plus
+        if (pairPlusButton != null) pairPlusButton.SetActive(false);
 
+        StartCoroutine(DealCardsRoutine()); //
+    }
+
+    private IEnumerator DealCardsRoutine()
+    {
+        playerHand.Clear(); //
+        dealerHand.Clear(); //
+
+        // One-by-one dealing
         for (int i = 0; i < 3; i++)
         {
             playerHand.Add(deck.Draw());
+            playerCardVisuals[i].SetCard(playerHand[i], true); //
+            yield return new WaitForSeconds(cardDelay);
+
             dealerHand.Add(deck.Draw());
-            playerCardVisuals[i].SetCard(playerHand[i], true);
-            dealerCardVisuals[i].SetCard(dealerHand[i], false);
+            dealerCardVisuals[i].SetCard(dealerHand[i], false); //
+            yield return new WaitForSeconds(cardDelay);
         }
-        currentState = GameState.Decision;
-        UpdateUI("Play ($" + anteBet + ") or Fold?");
+
+        currentState = GameState.Decision; //
+        UpdateUI("Cards Dealt. Play ($" + anteBet + ") or Fold?"); //
     }
 
     public void Play()
     {
-        if (currentState != GameState.Decision) return;
-        bank -= anteBet;
-        currentState = GameState.Showdown;
-        Resolve();
+        if (currentState != GameState.Decision) return; //
+        bank -= anteBet; // In 3-Card Poker, the Play bet equals the Ante
+        currentState = GameState.Showdown; //
+        StartCoroutine(ResolveRoutine()); //
     }
 
     public void Fold()
     {
-        if (currentState != GameState.Decision) return;
-        // Pair Plus is also lost on a fold
-        pairPlusBet = 0;
-        StartGame();
+        if (currentState != GameState.Decision) return; //
+        UpdateUI("Folded. Bets lost."); //
+        ClearTableVisuals();
+        StartGame(); //
     }
 
-    private void Resolve()
+    private IEnumerator ResolveRoutine()
     {
-        for (int i = 0; i < 3; i++) dealerCardVisuals[i].SetCard(dealerHand[i], true);
+        // Reveal Dealer cards sequentially
+        UpdateUI("Revealing Dealer's Hand...");
+        for (int i = 0; i < 3; i++)
+        {
+            dealerCardVisuals[i].SetCard(dealerHand[i], true); //
+            yield return new WaitForSeconds(cardDelay * 2);
+        }
 
-        HandEvaluator pEval = new HandEvaluator(playerHand);
-        HandEvaluator dEval = new HandEvaluator(dealerHand);
+        HandEvaluator pEval = new HandEvaluator(playerHand); //
+        HandEvaluator dEval = new HandEvaluator(dealerHand); //
 
         string resultMessage = "";
 
-        // 1. Resolve Pair Plus Bet (Independent of Dealer)
+        // 1. Resolve Pair Plus
         if (pairPlusBet > 0)
         {
-            int multiplier = GetPairPlusMultiplier(pEval.Rank);
+            int multiplier = GetPairPlusMultiplier(pEval.Rank); //
             if (multiplier > 0)
             {
                 int win = pairPlusBet * multiplier;
-                bank += pairPlusBet + win; // Return original bet + winnings
+                bank += pairPlusBet + win;
                 resultMessage += "Pair Plus Wins $" + win + "! ";
             }
-            pairPlusBet = 0; // Reset for next round
         }
 
-        // 2. Resolve Main Game
-        if (!dEval.DealerQualifies())
+        // 2. Resolve Main Hand
+        if (!dEval.DealerQualifies()) //
         {
-            bank += (anteBet * 2) + anteBet;
-            resultMessage += "Dealer doesn't qualify. You win Ante!";
+            bank += (anteBet * 2) + anteBet; // Ante wins 1:1, Play pushes
+            resultMessage += "Dealer doesn't qualify. Ante Wins!";
         }
         else
         {
-            int result = CompareHands(pEval, dEval);
+            int result = CompareHands(pEval, dEval); //
             if (result > 0)
             {
-                bank += (anteBet * 2) + (anteBet * 2);
-                resultMessage += "You Win Main Hand!";
+                bank += (anteBet * 4);
+                resultMessage += "Player Wins Main Hand!";
             }
             else if (result < 0) resultMessage += "Dealer Wins Main Hand.";
-            else { bank += anteBet + anteBet; resultMessage += "Main Hand Push."; }
+            else { bank += (anteBet * 2); resultMessage += "Main Hand Push."; }
         }
 
-        UpdateUI(resultMessage);
-        currentState = GameState.Ante;
+        UpdateUI(resultMessage); //
+
+        // 3. Post-Game Cleanup
+        yield return new WaitForSeconds(3.0f);
+        ClearTableVisuals();
+        StartGame(); // Automatically resets state to Ante and clears hand lists
     }
 
     private int GetPairPlusMultiplier(PokerHandRank rank)
@@ -146,13 +189,19 @@ public class ThreeCardGameManager : MonoBehaviour
 
     private int CompareHands(HandEvaluator p, HandEvaluator d)
     {
-        if (p.Rank != d.Rank) return p.Rank.CompareTo(d.Rank);
-        return p.HighCardValue.CompareTo(d.HighCardValue);
+        if (p.Rank != d.Rank) return p.Rank.CompareTo(d.Rank); //
+        return p.HighCardValue.CompareTo(d.HighCardValue); //
+    }
+
+    private void ClearTableVisuals()
+    {
+        foreach (var card in playerCardVisuals) card.SetCard(null, false); //
+        foreach (var card in dealerCardVisuals) card.SetCard(null, false); //
     }
 
     void UpdateUI(string message)
     {
-        if (bankText != null) bankText.text = "Bank: $" + bank;
-        if (statusText != null) statusText.text = message;
+        if (bankText != null) bankText.text = "Bank: $" + bank; //
+        if (statusText != null) statusText.text = message; //
     }
 }
