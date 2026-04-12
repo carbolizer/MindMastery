@@ -248,7 +248,7 @@ public class Chip : MonoBehaviour
                     );
                     if (tileRect.Contains(transform.position))
                     {
-                    ClosestTile = cell;
+                        ClosestTile = cell;
                     }
                     
                 }

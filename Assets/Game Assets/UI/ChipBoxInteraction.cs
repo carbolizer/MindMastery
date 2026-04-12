@@ -50,7 +50,7 @@ public class ChipBoxInteraction : MonoBehaviour
             var chipData = GlobalGameManager.Player.m_chips[(int)item.chipType];
             
 
-            if (chipData.m_amount > 0)
+            if (chipData.m_amount > 0 && GlobalGameManager.Player.m_money > 0)
             {
                 Vector3 pos = new Vector3(item.position.x, item.position.y + 4, -24);
 

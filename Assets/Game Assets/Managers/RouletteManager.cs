@@ -8,6 +8,8 @@ public class RouletteManager : MonoBehaviour
     [SerializeField]
     private GameObject TableHB;
 
+    public List<GameObject> WinningCells = new List<GameObject>();
+
     
 
 

@@ -86,7 +86,7 @@ public class RouletteRoll : MonoBehaviour
     public float bet;
     
     private int lastWin;
-
+    public bool rolling = false;
 
 
     //Number Adjacency unused
@@ -125,15 +125,12 @@ public class RouletteRoll : MonoBehaviour
         PreRoll();
     }
 
-    
-    void Update()
-    {
-        
-    }
 
     public void PreRoll()
     {
-       
+        RouletteManager.Instance.WinningCells.Clear();
+
+        
         lastWin = UnityEngine.Random.Range(0, RouletteNums);
 
         for (int i = 0; i < 11; i++)
@@ -143,28 +140,49 @@ public class RouletteRoll : MonoBehaviour
 
         foreach (var obj in RouletteManager.Instance.Cells)
         {
+            obj.GetComponent<SpriteRenderer>().enabled = false;
+
+
             var RC = obj.GetComponent<RouletteCell>();
+
             if ((int)obj.GetComponent<RouletteCell>().Cell == lastWin)
             {
-                obj.GetComponent<SpriteRenderer>().color = Color.blue;
+                
+                RouletteManager.Instance.WinningCells.Add(obj);
                 RC.doesWinNext = true;
+
+                //Debug
+                obj.GetComponent<SpriteRenderer>().color = Color.blue;
+                //obj.GetComponent<SpriteRenderer>().enabled = true;
+
             } else
             {
-                obj.GetComponent<SpriteRenderer>().color = Color.white;
+                
                 RC.doesWinNext = false;
+
+                //Debug
+                obj.GetComponent<SpriteRenderer>().color = Color.white;
             }
         }
 
-        foreach (var extraCell in RouletteManager.Instance.ExtraCells)
+        foreach (var obj in RouletteManager.Instance.ExtraCells)
         {
-            var RC = extraCell.GetComponent<RouletteCell>();
+            obj.GetComponent<SpriteRenderer>().enabled = false;
+
+
+            var RC = obj.GetComponent<RouletteCell>();
+
             if (RouletteTable[(AssociatedNumberMode)(int)RC.Cell - 37].m_wonNextRoll)
             {
-                extraCell.GetComponent<SpriteRenderer>().color = Color.blue;
+                RouletteManager.Instance.WinningCells.Add(obj);
                 RC.doesWinNext = true;
+
+                //Debug
+                obj.GetComponent<SpriteRenderer>().color = Color.blue;
+                //obj.GetComponent<SpriteRenderer>().enabled = true;
             } else
             {
-                extraCell.GetComponent<SpriteRenderer>().color = Color.white;
+                obj.GetComponent<SpriteRenderer>().color = Color.white;
                 RC.doesWinNext = false;
             }
             
@@ -177,58 +195,63 @@ public class RouletteRoll : MonoBehaviour
     //Run Preroll after rolling
     public void Roll()
     {
-        bet = 0;
-        //Animation
-        float currentPrizeMultiplier = 1;
-        bool didWin = false;
-
-        GlobalGameManager.Player.m_money -= bet;
-
-        foreach (var chip in GlobalGameManager.Instance.ChipsOnTable)
-        {   
-            bet += (int)chip.GetComponent<Chip>().m_value;
-            GameObject cell = chip.GetComponent<Chip>().ClosestTile;
-            if (RouletteManager.Instance.Cells.Contains(cell))
-            {
-                currentPrizeMultiplier = 36;
-                if (int.Parse(cell.name) == lastWin)
-                {
-                    didWin = true;
-                }
-            }
-
-            foreach (var EC in RouletteManager.Instance.ExtraCells)
-            {
-                if (cell == EC)
-                {
-                    
-                    currentPrizeMultiplier = RouletteTable[(AssociatedNumberMode)(int)EC.GetComponent<RouletteCell>().Cell - 37].m_payoutMultiplier;
-                    didWin = RouletteTable[(AssociatedNumberMode)(int)EC.GetComponent<RouletteCell>().Cell - 37].m_wonNextRoll;
-                }
-            }
-        }
-
-        if (!didWin)
+        if (!rolling)
         {
-            currentPrizeMultiplier *= -1;
+            rolling = true;
+            bet = 0;
+            //Animation
+            float currentPrizeMultiplier = 1;
+            bool didWin = false;
+
+            GlobalGameManager.Player.m_money -= bet;
+
+            foreach (var chip in GlobalGameManager.Instance.ChipsOnTable)
+            {   
+                bet += (int)chip.GetComponent<Chip>().m_value;
+                GameObject cell = chip.GetComponent<Chip>().ClosestTile;
+                if (RouletteManager.Instance.Cells.Contains(cell))
+                {
+                    currentPrizeMultiplier = 36;
+                    if (int.Parse(cell.name) == lastWin)
+                    {
+                        didWin = true;
+                    }
+                }
+
+                foreach (var EC in RouletteManager.Instance.ExtraCells)
+                {
+                    if (cell == EC)
+                    {
+                        
+                        currentPrizeMultiplier = RouletteTable[(AssociatedNumberMode)(int)EC.GetComponent<RouletteCell>().Cell - 37].m_payoutMultiplier;
+                        didWin = RouletteTable[(AssociatedNumberMode)(int)EC.GetComponent<RouletteCell>().Cell - 37].m_wonNextRoll;
+                    }
+                }
+            }
+
+            if (!didWin)
+            {
+                currentPrizeMultiplier *= -1;
+                
+            }
             
+            var list = GlobalGameManager.Instance.ChipsOnTable;
+
+            for (int i = list.Count - 1; i >= 0; i--)
+            {
+                var chip = list[i];
+
+                Destroy(chip);
+            }
+            GlobalGameManager.Player.m_money += bet * currentPrizeMultiplier;
+            Debug.Log("Money after roll: " + GlobalGameManager.Player.m_money);
+            GlobalGameManager.Player.RefreshChipCount();
+
+
+            //Award player then do a new preroll
+            PreRoll();
         }
         
-        var list = GlobalGameManager.Instance.ChipsOnTable;
-
-        for (int i = list.Count - 1; i >= 0; i--)
-        {
-            var chip = list[i];
-
-            Destroy(chip);
-        }
-        GlobalGameManager.Player.m_money += bet * currentPrizeMultiplier;
-        Debug.Log("Money after roll: " + GlobalGameManager.Player.m_money);
-        GlobalGameManager.Player.RefreshChipCount();
-
-
-        //Award player then do a new preroll
-        PreRoll();
     }
 }
 

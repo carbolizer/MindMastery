@@ -26,12 +26,6 @@ public class GenericUI : MonoBehaviour
         pointer = AlivePP.GetComponent<Pointer>();
     }
 
-    void OnGUI()
-    {
-        
-
-    }
-
     void Update()
     {   
 

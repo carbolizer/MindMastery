@@ -13,7 +13,5 @@ public class RouletteCell : MonoBehaviour
             Cell = (RouletteCellType)System.Enum.GetValues(typeof(RouletteCellType)).GetValue(val);
         }
         
-    }
-
-    
+    } 
 }
