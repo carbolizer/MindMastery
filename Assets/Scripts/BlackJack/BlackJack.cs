@@ -64,7 +64,6 @@ public class BlackJack : MonoBehaviour {
                 resolveTimer = 0f;
 
                
-                GlobalGameManager.Player.m_money -= playerBet;
                 GlobalGameManager.Instance.DestroyChipsOnTable();
 
                 DestroyCards();
@@ -298,31 +297,31 @@ public class BlackJack : MonoBehaviour {
 
         if (bust)
         {
-            payout = 0;
+            payout = -playerBet;
             stateText.text = "BUST";
             audioSource.PlayOneShot(sfxLose);
         }
         else if (blackJack && dealerSum != 21)
         {
-            payout = Mathf.RoundToInt(playerBet * 2.5f); // original + 1.5x
+            payout = Mathf.RoundToInt(playerBet * 1.5f); // win 1.5x bet
             stateText.text = "BLACKJACK";
             audioSource.PlayOneShot(sfxWin);
         }
         else if (dealerSum > 21 || playerSum > dealerSum)
         {
-            payout = playerBet * 2; // original + win
+            payout = playerBet; // win bet amount
             stateText.text = "WIN";
             audioSource.PlayOneShot(sfxWin);
         }
         else if (playerSum < dealerSum)
         {
-            payout = 0;
+            payout = -playerBet;
             stateText.text = "DEALER WINS";
             audioSource.PlayOneShot(sfxLose);
         }
         else
         {
-            payout = playerBet; // push (refund)
+            payout = 0; // push (no change)
             stateText.text = "PUSH";
             audioSource.PlayOneShot(sfxCollide);
         }
