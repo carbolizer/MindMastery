@@ -2,25 +2,23 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEngine.UI; 
+using UnityEngine.UI;
 
 public class ThreeCardGameManager : MonoBehaviour
 {
-    public enum GameState { Betting, Decision, Showdown }
+    public enum GameState { Betting, Decision, Showdown, Locked } // Added Locked state for game over
     public GameState currentState;
 
     [Header("Financial Settings")]
-    public int balance = 9000;
     public int totalWager = 0;
     public int currentAnte = 0;
     public int currentPairPlus = 0;
     public int currentPlayBet = 0;
 
-    [Header("Cheat Mechanics")]
-    public Slider suspicionBar;      
-    public float currentSuspicion = 0f;
-    public float maxSuspicion = 100f;
-    public float suspicionPenalty = 34f; // Takes 3 peeks to hit 100 and bust
+    [Header("Cheat Mechanics UI")]
+    public Slider suspicionBar;
+    public TextMeshProUGUI suspicionPercentageText; // NEW: The percentage text
+    public int peekPenalty = 34; // Amount sent to GlobalGameManager
 
     [Header("UI References")]
     public TextMeshProUGUI balanceText;
@@ -39,8 +37,40 @@ public class ThreeCardGameManager : MonoBehaviour
 
     void Start()
     {
-        if (suspicionBar != null) suspicionBar.value = 0;
         StartGame();
+    }
+
+    // NEW: Update runs every frame to sync the UI with the GlobalGameManager
+    void Update()
+    {
+        if (GlobalGameManager.Instance != null && GlobalGameManager.Player != null)
+        {
+            float currentSus = GlobalGameManager.Player.m_suspicion;
+
+            // 1. Update the Slider (0.0 to 1.0)
+            if (suspicionBar != null)
+            {
+                suspicionBar.value = currentSus / 100f;
+            }
+
+            // 2. Update the Percentage Text (e.g., "34%")
+            if (suspicionPercentageText != null)
+            {
+                suspicionPercentageText.text = Mathf.FloorToInt(currentSus) + "%";
+            }
+
+            // 3. Catch the Criminal State triggered by GlobalGameManager
+            if (GlobalGameManager.Player.m_state == PlayerSpecialState.Criminal && currentState != GameState.Locked)
+            {
+                StartCoroutine(BustedRoutine());
+            }
+
+            // 4. Continuously update balance UI from the global player profile
+            if (balanceText != null)
+            {
+                balanceText.text = "$" + GlobalGameManager.Player.m_money.ToString("N0");
+            }
+        }
     }
 
     public void StartGame()
@@ -63,7 +93,6 @@ public class ThreeCardGameManager : MonoBehaviour
     // --- CHEAT MECHANIC ---
     public void PeekAtDealerCards()
     {
-        // Only allow cheating after cards are dealt but before the round is resolved
         if (currentState != GameState.Decision) return;
 
         // Reveal the dealer's cards early
@@ -72,64 +101,49 @@ public class ThreeCardGameManager : MonoBehaviour
             dealerCardVisuals[i].SetCard(dealerHand[i], true);
         }
 
-        // Apply heat
-        currentSuspicion += suspicionPenalty;
-
-        // Update the visual bar (Slider values go from 0 to 1)
-        if (suspicionBar != null)
+        // Apply heat to the GLOBAL manager
+        if (GlobalGameManager.Instance != null)
         {
-            suspicionBar.value = currentSuspicion / maxSuspicion;
-        }
-
-        if (currentSuspicion >= maxSuspicion)
-        {
-            StartCoroutine(BustedRoutine());
-        }
-        else
-        {
+            GlobalGameManager.Instance.UpdateSuspicionBy(peekPenalty);
             UpdateUI("Careful... The dealer is getting suspicious.");
         }
     }
 
     private IEnumerator BustedRoutine()
     {
-        currentState = GameState.Showdown; // Lock out further button clicks
+        currentState = GameState.Locked; // Lock out further button clicks
 
-        // Wipe the player out
-        balance = 0;
+        // Wipe the local wagers
         totalWager = 0;
         currentAnte = 0;
         currentPairPlus = 0;
         currentPlayBet = 0;
 
-        UpdateUI("CAUGHT CHEATING! Security kicked you out and confiscated your chips.");
+        UpdateUI("CAUGHT CHEATING! Security is on the way!");
         UpdateWinText(0);
 
-        yield return new WaitForSeconds(4.0f);
-
-        // Reset their suspicion and money
-        currentSuspicion = 0f;
-        if (suspicionBar != null) suspicionBar.value = 0;
-        balance = 1000;
-
-        StartCoroutine(CleanupAfterHand(0f));
+        // We don't need to manually reset the game here because your GlobalGameManager
+        // will trigger the "PlayLoseAnim" and switch scenes automatically.
+        yield return null;
     }
     // -----------------------
 
     public void AddAnte(int amount)
     {
-        if (currentState != GameState.Betting || balance < amount) return;
+        if (currentState != GameState.Betting || GlobalGameManager.Player.m_money < amount) return;
         currentAnte += amount;
-        balance -= amount;
+        GlobalGameManager.Player.m_money -= amount; // Subtract from GLOBAL money
+        GlobalGameManager.Player.RefreshChipCount(); // Update global chips
         totalWager += amount;
         UpdateUI("Ante placed: $" + currentAnte);
     }
 
     public void AddPairPlus(int amount)
     {
-        if (currentState != GameState.Betting || balance < amount) return;
+        if (currentState != GameState.Betting || GlobalGameManager.Player.m_money < amount) return;
         currentPairPlus += amount;
-        balance -= amount;
+        GlobalGameManager.Player.m_money -= amount; // Subtract from GLOBAL money
+        GlobalGameManager.Player.RefreshChipCount(); // Update global chips
         totalWager += amount;
         UpdateUI("Pair Plus placed: $" + currentPairPlus);
     }
@@ -165,7 +179,8 @@ public class ThreeCardGameManager : MonoBehaviour
         if (currentState != GameState.Decision) return;
 
         currentPlayBet = currentAnte;
-        balance -= currentPlayBet;
+        GlobalGameManager.Player.m_money -= currentPlayBet; // Subtract from GLOBAL money
+        GlobalGameManager.Player.RefreshChipCount();
         totalWager += currentPlayBet;
 
         currentState = GameState.Showdown;
@@ -181,11 +196,10 @@ public class ThreeCardGameManager : MonoBehaviour
 
     private IEnumerator ResolveRoutine()
     {
-        // Dealer cards are revealed here (if they weren't already flipped by the cheat button)
         for (int i = 0; i < 3; i++)
         {
             dealerCardVisuals[i].SetCard(dealerHand[i], true);
-            yield return new WaitForSeconds(cardDelay * 2);
+            yield return new WaitForSeconds(cardDelay * 2); 
         }
 
         HandEvaluator pEval = new HandEvaluator(playerHand);
@@ -209,7 +223,10 @@ public class ThreeCardGameManager : MonoBehaviour
             else if (result == 0) sessionWin += currentAnte + currentPlayBet;
         }
 
-        balance += sessionWin;
+        // Add winnings to GLOBAL money
+        GlobalGameManager.Player.m_money += sessionWin;
+        GlobalGameManager.Player.RefreshChipCount();
+
         UpdateWinText(sessionWin);
         UpdateUI(sessionWin > 0 ? "You Won $" + sessionWin + "!" : "Dealer Wins.");
 
@@ -247,7 +264,7 @@ public class ThreeCardGameManager : MonoBehaviour
 
     void UpdateUI(string message)
     {
-        if (balanceText != null) balanceText.text = "$" + balance.ToString("N0");
+        // Balance text is now handled in Update()
         if (wagerText != null) wagerText.text = "$" + totalWager.ToString("N0");
         if (statusText != null) statusText.text = message;
     }
