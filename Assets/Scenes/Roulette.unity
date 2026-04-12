@@ -2748,7 +2748,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &793963265
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2761,13 +2761,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 890efdef5100fba4bb3ca5fc4b877987, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GlobalGameManager
+  FadeOutObj: {fileID: 0}
   CursorPos: {x: 0, y: 0, z: 0}
   CursorState: 0
   currentGame: 0
+  PlayLoseAnim: 0
   HoveredObject: {fileID: 0}
   HoveringObject: 0
   HoveredObjects: []
   ChipsOnTable: []
+  DisableChipHover: 0
+  CanDrink: 1
+  CurrentScene: 0
 --- !u!4 &793963266
 Transform:
   m_ObjectHideFlags: 0

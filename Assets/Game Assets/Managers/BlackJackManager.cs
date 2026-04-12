@@ -118,6 +118,8 @@ public class BlackJackManager : MonoBehaviour
 
 
     public float cardSpacing = 0.5f;
+    private bool roundEnding = false;
+    private bool roundActive = false;
 
 
      void Awake()
@@ -143,7 +145,7 @@ public class BlackJackManager : MonoBehaviour
         MenuButtons["stand"] = GameObject.Find("StandBtn");
         MenuButtons["fold"] = GameObject.Find("FoldBtn");
 
-        DealerLabel.text = "-";
+        //DealerLabel.text = "-";
 
         PreshuffleDeck();
     }
@@ -181,7 +183,7 @@ public class BlackJackManager : MonoBehaviour
         gameState = GameState.Waiting;
         DealerLabel.text = "Draw";
         PlayerLabel.text = "Draw";
-        EndRound(false);
+        EndRound(false, true);
     }
 
     void EvaluateWinner()
@@ -211,7 +213,7 @@ public class BlackJackManager : MonoBehaviour
     {
         while (GetHandTotal(DealerCards) < GetHandTotal(PlayerCards))
         {
-            var card = DrawCard(GetDealerCardPos(DealerCards.Count));
+            var card = DrawCard(GetDealerCardPos(DealerCards.Count), !powersOn);
             DealerCards.Add(card);
             UpdateZOrder(card, DealerCards.Count - 1);
             card.SetActive(true);
@@ -256,6 +258,7 @@ public class BlackJackManager : MonoBehaviour
             return;
 
         TableChips = new List<GameObject>(GlobalGameManager.Instance.ChipsOnTable);
+        roundActive = true;
         gameState = GameState.Playing;
 
         PlayerCards.Clear();
@@ -374,6 +377,9 @@ public class BlackJackManager : MonoBehaviour
 
 
 
+        if (!roundActive)
+            return;
+
         UpdateGameState();
         UpdateUI();
 
@@ -449,12 +455,21 @@ public class BlackJackManager : MonoBehaviour
     }
 
 
-    void EndRound(bool win)
-    {
+    void EndRound(bool win, bool draw = false)
+    {   
+        if (roundEnding) return;
+            roundEnding = true;
         gameState = GameState.Waiting;
-
-        DealerLabel.text = (win ? "you" : "dealer") + " won";
-        PlayerLabel.text = (win ? "+" : "-") + $"${PlayerBet}";
+        if (!draw)
+        {
+            DealerLabel.text = (win ? "you" : "dealer") + " won";
+            PlayerLabel.text = (win ? "+" : "-") + $"${PlayerBet}";
+        } else
+        {
+            DealerLabel.text = "draw";
+            PlayerLabel.text = $"+${PlayerBet}";
+        }
+        
 
         
 
@@ -490,6 +505,8 @@ public class BlackJackManager : MonoBehaviour
 
         gameState = GameState.Betting;
         roundState = RoundState.PlayerTurn;
+
+        roundEnding = false;
     }
 
 
@@ -511,7 +528,10 @@ public class BlackJackManager : MonoBehaviour
 
     public void DealerHit()
     {
-        DealerCards.Add(DrawCard(GetDealerCardPos(DealerCards.Count)));
+        var card = DrawCard(GetPlayerCardPos(PlayerCards.Count), !powersOn);
+        DealerCards.Add(card);
+        UpdateZOrder(card, DealerCards.Count - 1);
+        card.SetActive(true);
         UpdateDeckPreview();
     }
 
@@ -625,6 +645,7 @@ public class BlackJackManager : MonoBehaviour
 
         var gc = card.GetComponent<GameCard>();
         gc.flipped = flipped;
+        
         gc.RefreshVisual();
 
         card.SetActive(false);
@@ -674,10 +695,7 @@ public class BlackJackManager : MonoBehaviour
             break;
             case GameState.Playing:
             PlayerLabel.text = GetHandTotal(PlayerCards).ToString();
-            if (powersOn)
-                DealerLabel.text = GetHandTotal(DealerCards).ToString(); 
-            else
-                DealerLabel.text = "-"; 
+            DealerLabel.text = GetHandTotal(DealerCards).ToString(); 
             break;
         }
         
@@ -769,7 +787,7 @@ public class BlackJackManager : MonoBehaviour
         } else
         {
             MenuButtons["mind"].GetComponent<SpriteRenderer>().sprite = mindOffSpr;
-            DealerLabel.text = "-";
+            //DealerLabel.text = "-";
         }
 
         foreach (var obj in FlippedCards)

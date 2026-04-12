@@ -264,6 +264,14 @@ public class GlobalGameManager : MonoBehaviour
     {
         
     }
+
+    public void OnSelectNewGameScene()
+    {
+        int newScene = (int)HoveredObject.GetComponent<SceneSwap>().ToScene;
+        FadeOutObj.GetComponent<FadeOutFuncs>().animator.SetInteger("SceneID", newScene);
+        FadeOutObj.GetComponent<FadeOutFuncs>().animator.SetBool("SwitchScene", true);
+        
+    }
     
 
 }

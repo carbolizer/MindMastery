@@ -5,9 +5,21 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/Scenes/GameScene.unity
+    guid: 7bed9c773c0b81d49924c14301211a28
+  - enabled: 1
+    path: Assets/Scenes/Roulette.unity
+    guid: 2f2cd1e391c4c804390211a7a2b3d67b
+  - enabled: 1
+    path: Assets/Scenes/BlackJackNew.unity
+    guid: 59710416402e834459feb48ff22af47d
+  - enabled: 1
+    path: Assets/Scenes/ThreeCardPoker.unity
+    guid: 24b2d6a574757d34a8e19fd146fcde11
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
