@@ -296,6 +296,42 @@ public class GlobalGameManager : MonoBehaviour
         
     }
 
+    public void PlayAgain()
+    {
+        var blackJack = FindObjectOfType<BlackJack>();
+        if (blackJack != null) blackJack.PlayAgain();
+    }
+
+    public void Hit()
+    {
+        var blackJack = FindObjectOfType<BlackJack>();
+        if (blackJack != null) blackJack.Hit();
+    }
+
+    public void Stand()
+    {
+        var blackJack = FindObjectOfType<BlackJack>();
+        if (blackJack != null) blackJack.Stand();
+    }
+
+    public void Quit()
+    {
+        var blackJack = FindObjectOfType<BlackJack>();
+        if (blackJack != null) blackJack.Quit();
+    }
+
+    public void FlipHiddenCard()
+    {
+        var blackJack = FindObjectOfType<BlackJack>();
+        if (blackJack != null) blackJack.FlipHiddenCard();
+    }
+
+    public void PlaceBet()
+    {
+        var blackJack = FindObjectOfType<BlackJack>();
+        if (blackJack != null) blackJack.PlaceBet();
+    }
+
     // accepts the SceneSwap component directly from the button that was clicked
     public void OnUIButtonSceneChange(SceneSwap swapData)
     {
