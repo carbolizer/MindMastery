@@ -23,6 +23,7 @@ public class BlackJack : MonoBehaviour {
     public TextMeshProUGUI dealerCardValue;
     public TextMeshPro stateText;
     public TextMeshPro betAmountText;
+    public GameObject chipBox;
 
     public PlayState m_playState = PlayState.Betting;
 
@@ -44,7 +45,7 @@ public class BlackJack : MonoBehaviour {
         againButton.SetActive(false);
         playButton.SetActive(false);
         
-        State bet       = new("bet",        () => { shouldPlayAgain = false; placedBet = false; playerBet = 0; resolveTimer = 0f; playButton.SetActive(false); }, (dt) => { playButton.SetActive(playerBet > 0); }, () => { playButton.SetActive(false); });
+        State bet       = new("bet",        () => { shouldPlayAgain = false; placedBet = false; playerBet = 0; resolveTimer = 0f; playButton.SetActive(false); m_playState = PlayState.Betting; chipBox.SetActive(true); }, (dt) => { playButton.SetActive(playerBet > 0); }, () => { playButton.SetActive(false); chipBox.SetActive(false); });
         State deal = new("deal",
             () =>
             {
@@ -60,6 +61,7 @@ public class BlackJack : MonoBehaviour {
                 dealerCards.Clear();
                 dealerCardUIs.Clear();
                 dealState = 0;
+                canSwitchDealerCard = false;
                 bust = false;
                 blackJack = false;
                 playerSum = 0;
@@ -157,7 +159,7 @@ public class BlackJack : MonoBehaviour {
     public void Hit()                   { shouldHit = true; }
     public void Stand()                 { shouldStand = true; }
     public void Quit()                  { shouldQuit = true; }
-    public void PlayAgain()             { if (m_playState == PlayState.Playing) { m_playState = PlayState.Resetting; } else { m_playState = PlayState.Playing; } shouldPlayAgain = true; placedBet = true; }
+    public void PlayAgain()             { if (m_playState == PlayState.Playing) { m_playState = PlayState.Resetting; } else { m_playState = PlayState.Playing; } shouldPlayAgain = true; if (playerBet > 0) placedBet = true; }
 
 // private
     private Deck            deck;
@@ -178,6 +180,7 @@ public class BlackJack : MonoBehaviour {
     private bool            blackJack       = false;
     private bool            hitComplete     = false;
     private bool            standDone       = false;
+    private bool            canSwitchDealerCard = false;
 
     private int             sessionEarnings = 0;
     private float           resolveTimer    = 0f;
@@ -341,6 +344,7 @@ public class BlackJack : MonoBehaviour {
     }
 
     public void FlipHiddenCard() {
+        if (canSwitchDealerCard) { SwitchDealerCard(); canSwitchDealerCard = false; return; }
         for (int i = 0; i < dealerCardUIs.Count; i++) {
             if (dealerCardUIs[i].card.hidden) {
                 // find and unhide the matching card in dealerCards
@@ -353,10 +357,21 @@ public class BlackJack : MonoBehaviour {
                     }
                 }
                 RevealCard(i);
+                canSwitchDealerCard = true;
                 EvaluateDealerSum();
                 return;
             }
         }
+    }
+
+    private void SwitchDealerCard() {
+        Card newCard = deck.PullTopCard();
+        dealerCards[1] = newCard;
+        var cui = dealerCardUIs[1];
+        cui.card = newCard;
+        cui.obj.GetComponent<Image>().sprite = Resources.Load<Sprite>("Cards/" + newCard.name);
+        dealerCardUIs[1] = cui;
+        EvaluateDealerSum();
     }
 
     private void AddCardToUI(Card card, Transform transform, bool player) {
