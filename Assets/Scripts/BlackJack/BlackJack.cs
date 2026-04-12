@@ -230,7 +230,15 @@ public class BlackJack : MonoBehaviour {
         }
     }
 
-    private void UpdateResolve(float dt) { resolveTimer += dt; if (resolveTimer >= 1f) againButton.SetActive(true); }
+    private void UpdateResolve(float dt) {
+        resolveTimer += dt;
+        if (resolveTimer >= 1f && !againButton.activeSelf) {
+            DestroyCards();
+            playerCards.Clear(); dealerCards.Clear(); dealerCardUIs.Clear();
+            playerSum = 0; dealerSum = 0;
+            againButton.SetActive(true);
+        }
+    }
 
     private void RevealCard(int index) {
         if (index >= dealerCardUIs.Count) return;
