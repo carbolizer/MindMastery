@@ -212,8 +212,6 @@ public class RouletteRoll : MonoBehaviour
 
         bet = 0;
         //Animation
-        float currentPrizeMultiplier = 1;
-        bool didWin = false;
 
         
 

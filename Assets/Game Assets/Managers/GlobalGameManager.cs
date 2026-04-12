@@ -4,6 +4,21 @@ using System.Collections;
 using Unity.VisualScripting;
 using System.Linq;
 
+
+
+
+public enum GameScenes
+{
+    Default,
+    Roulette,
+    Blackjack,
+    ThreeCardPoker,
+    LoseScreen,
+    WinScreen,
+    MainMenu
+}
+
+
 public enum CurrentGame
 {
     None, //Roaming casino
@@ -18,11 +33,14 @@ public enum CurrentGame
 public class GlobalGameManager : MonoBehaviour
 {
     public static GlobalGameManager Instance { get; private set; }
+    public GameObject FadeOutObj;
     public static PlayerData Player;
     public Vector3 CursorPos;
     public CursorState CursorState;
 
     public CurrentGame currentGame;
+
+    public bool PlayLoseAnim = false;
 
 
     public GameObject HoveredObject = null;
@@ -41,9 +59,25 @@ public class GlobalGameManager : MonoBehaviour
     public bool CanDrink = true;
 
 
+
+
+    public GameScenes CurrentScene = GameScenes.Default;
+
+
     public void DestroyChipsOnTable()
     {
         var list = Instance.ChipsOnTable;
+
+        for (int i = list.Count - 1; i >= 0; i--)
+        {
+            Destroy(list[i]);
+        }
+        list.Clear();
+    }
+
+    public static void DestroyChipsOnTable(List<GameObject> list)
+    {
+    
 
         for (int i = list.Count - 1; i >= 0; i--)
         {
@@ -69,6 +103,23 @@ public class GlobalGameManager : MonoBehaviour
 
     void Update()
     {
+
+        if (Player.m_money < 10)
+        {
+            Player.m_state = PlayerSpecialState.Broke;
+        }
+
+        if (Player.m_suspicion >= 100)
+        {
+            Player.m_state = PlayerSpecialState.Criminal;
+        }
+
+        if (Player.m_sobriety <= 0)
+        {
+            Player.m_state = PlayerSpecialState.Drunk;
+        }
+
+
         switch (Player.m_state)
         {
             case PlayerSpecialState.None:
@@ -78,12 +129,23 @@ public class GlobalGameManager : MonoBehaviour
             break;
 
             case PlayerSpecialState.Criminal:
-
+            PlayLoseAnim = true;
             break;
 
             case PlayerSpecialState.Drunk:
-
+            PlayLoseAnim = true;
             break;
+
+            case PlayerSpecialState.Broke:
+            PlayLoseAnim = true;
+            break;
+        }
+
+        if (PlayLoseAnim)
+        {
+            //Call the fade out to new scene
+            Instance.FadeOutObj.GetComponent<FadeOutFuncs>().animator.SetBool("GameLose", true);
+            PlayLoseAnim = false;
         }
         
     }
@@ -192,6 +254,16 @@ public class GlobalGameManager : MonoBehaviour
             Player.m_suspicion = 0;
         }
     }
+
+    public void OnGameBack()
+    {
+        
+    }
+
+    public void SwitchScene()
+    {
+        
+    }
     
 
 }
@@ -200,7 +272,8 @@ public enum PlayerSpecialState
 {
     None,
     Drunk,
-    Criminal
+    Criminal,
+    Broke
 }
 
 

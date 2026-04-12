@@ -2,9 +2,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Runtime.CompilerServices;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
+
 
 public class BlackJack : MonoBehaviour {
 // public
@@ -16,15 +15,19 @@ public class BlackJack : MonoBehaviour {
     public GameObject cardPrefab;
     public GameObject againButton;
     public GameObject playButton;
-    public Canvas gameUI;
     public float cardOffset = 48f;
     public float cardWidth = 64f;
-    public TextMeshProUGUI playerCardValue;
-    public TextMeshProUGUI dealerCardValue;
+    public TextMeshPro playerCardValue;
+    public TextMeshPro dealerCardValue;
     public TextMeshPro stateText;
     public TextMeshPro betAmountText;
 
     public PlayState m_playState = PlayState.Betting;
+
+    private float bustTimer = 0f;
+    private bool waitingAfterBust = false;
+
+
 
     public enum PlayState
     {
@@ -231,6 +234,13 @@ public class BlackJack : MonoBehaviour {
     private void UpdateHit(float dt) {
         actionTimer += Time.deltaTime;
 
+        if (playerSum > 21)
+        {
+            bust = true;
+            waitingAfterBust = true;
+            bustTimer = 0f;
+        }
+
         // if (actionTimer <= actionDelay) return;
 
         var card = deck.PullTopCard();
@@ -324,12 +334,45 @@ public class BlackJack : MonoBehaviour {
         }
     }
 
-    private void UpdateResolve(float dt) {
+    private void UpdateResolve(float dt)
+    {
+        // If bust, delay reset
+        if (waitingAfterBust)
+        {
+            bustTimer += dt;
+
+            if (bustTimer >= 3f)
+            {
+                waitingAfterBust = false;
+                bustTimer = 0f;
+
+                DestroyCards();
+                playerCards.Clear();
+                dealerCards.Clear();
+                dealerCardUIs.Clear();
+
+                playerSum = 0;
+                dealerSum = 0;
+
+                againButton.SetActive(true);
+            }
+
+            return;
+        }
+
+        // normal resolve timing
         resolveTimer += dt;
-        if (resolveTimer >= 1f && !againButton.activeSelf) {
+
+        if (resolveTimer >= 1f && !againButton.activeSelf)
+        {
             DestroyCards();
-            playerCards.Clear(); dealerCards.Clear(); dealerCardUIs.Clear();
-            playerSum = 0; dealerSum = 0;
+            playerCards.Clear();
+            dealerCards.Clear();
+            dealerCardUIs.Clear();
+
+            playerSum = 0;
+            dealerSum = 0;
+
             againButton.SetActive(true);
         }
     }
@@ -337,27 +380,29 @@ public class BlackJack : MonoBehaviour {
     private void RevealCard(int index) {
         if (index >= dealerCardUIs.Count) return;
         var cui = dealerCardUIs[index];
-        cui.obj.GetComponent<Image>().sprite = Resources.Load<Sprite>("Cards/" + cui.card.name);
+        cui.obj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Cards/" + cui.card.name);
     }
 
     private void AddCardToUI(Card card, Transform transform, bool player) {
         var cardSprite = Resources.Load<Sprite>(card.hidden ? "Cards/back" : "Cards/" + card.name);
         var obj = Instantiate(cardPrefab, transform);
 
+        
+
         if (player) {
             int n = playerCards.Count;
             float totalWidth = (n - 1) * cardOffset + cardWidth;
             playerHand.transform.localPosition = new Vector3(-totalWidth / 2 / 16f, playerHand.transform.localPosition.y, 0);
-            obj.transform.localPosition = new Vector3((n - 1) * cardOffset, 0, 0);
+            obj.transform.localPosition = new Vector3((n - 1) * cardOffset, 0, -10 - n);
         }
         else {
             int n = dealerCards.Count;
             float totalWidth = (n - 1) * cardOffset + cardWidth;
             dealerHand.transform.localPosition = new Vector3(-totalWidth / 2 / 16f, dealerHand.transform.localPosition.y, 0);
-            obj.transform.localPosition = new Vector3((n - 1) * cardOffset, 0, 0);
+            obj.transform.localPosition = new Vector3((n - 1) * cardOffset, 0, -10 - n);
             dealerCardUIs.Add(new CardUI { card = card, obj = obj });
         }
-        obj.GetComponent<Image>().sprite = cardSprite;
+        obj.GetComponent<SpriteRenderer>().sprite = cardSprite;
     }
 
     private void DestroyCards() {
