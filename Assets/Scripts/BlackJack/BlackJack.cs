@@ -409,7 +409,7 @@ public class BlackJack : MonoBehaviour {
     private void RevealCard(int index) {
         if (index >= dealerCardUIs.Count) return;
         var cui = dealerCardUIs[index];
-        cui.obj.GetComponent<Image>().sprite = Resources.Load<Sprite>("Cards/" + cui.card.name);
+        cui.obj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Cards/" + cui.card.name);
         audioSource.PlayOneShot(sfxCardFlip);
     }
 
@@ -439,7 +439,7 @@ public class BlackJack : MonoBehaviour {
         dealerCards[1] = newCard;
         var cui = dealerCardUIs[1];
         cui.card = newCard;
-        cui.obj.GetComponent<Image>().sprite = Resources.Load<Sprite>("Cards/" + newCard.name);
+        cui.obj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Cards/" + newCard.name);
         audioSource.PlayOneShot(sfxCardFlip);
         dealerCardUIs[1] = cui;
         EvaluateDealerSum();
