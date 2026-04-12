@@ -3,6 +3,7 @@ using System.Data;
 using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 public class BlackJack : MonoBehaviour {
@@ -47,6 +48,13 @@ public class BlackJack : MonoBehaviour {
         stateText.text = "";
         againButton.SetActive(false);
         playButton.SetActive(false);
+
+        audioSource = gameObject.AddComponent<AudioSource>();
+        sfxCardDeal = Resources.Load<AudioClip>("Sound/card-deal");
+        sfxCardFlip = Resources.Load<AudioClip>("Sound/card-flip");
+        sfxWin      = Resources.Load<AudioClip>("Sound/win");
+        sfxLose     = Resources.Load<AudioClip>("Sound/lose");
+        sfxCollide  = Resources.Load<AudioClip>("Sound/collide");
         
         State bet       = new("bet",        () => { shouldPlayAgain = false; placedBet = false; playerBet = 0; resolveTimer = 0f; playButton.SetActive(false); m_playState = PlayState.Betting; chipBox.SetActive(true); }, (dt) => { playButton.SetActive(playerBet > 0); }, () => { playButton.SetActive(false); chipBox.SetActive(false); });
         State deal = new("deal",
@@ -197,6 +205,13 @@ public class BlackJack : MonoBehaviour {
     private float playerCardStartOffset     = 0f;
     private float dealerCardStartOffset     = 0f;
 
+    private AudioSource audioSource;
+    private AudioClip   sfxCardDeal;
+    private AudioClip   sfxCardFlip;
+    private AudioClip   sfxWin;
+    private AudioClip   sfxLose;
+    private AudioClip   sfxCollide;
+
     private void UpdateDeal(float dt) {
         actionTimer += Time.deltaTime;
 
@@ -207,19 +222,22 @@ public class BlackJack : MonoBehaviour {
                 var pcard1 = deck.PullTopCard(); 
                 playerCards.Add(pcard1); 
                 EvaluatePlayerSum(); 
-                AddCardToUI(pcard1, playerCardStart.transform, true); 
+                AddCardToUI(pcard1, playerCardStart.transform, true);
+                audioSource.PlayOneShot(sfxCardDeal);
                 break;
             case 1: 
                 var dcard1 = deck.PullTopCard();
                 dealerCards.Add(dcard1); 
                 EvaluateDealerSum(); 
                 AddCardToUI(dcard1, dealerCardStart.transform, false);
+                audioSource.PlayOneShot(sfxCardDeal);
                 break;
             case 2:
                 var pcard2 = deck.PullTopCard(); 
                 playerCards.Add(pcard2);
                 EvaluatePlayerSum();
                 AddCardToUI(pcard2, playerCardStart.transform, true);
+                audioSource.PlayOneShot(sfxCardDeal);
                 break;
             case 3:
                 var dcard2 = deck.PullTopCard();
@@ -227,6 +245,7 @@ public class BlackJack : MonoBehaviour {
                 dealerCards.Add(dcard2); 
                 EvaluateDealerSum(); 
                 AddCardToUI(dcard2, dealerCardStart.transform, false);
+                audioSource.PlayOneShot(sfxCardDeal);
                 break;
         }
 
@@ -250,6 +269,7 @@ public class BlackJack : MonoBehaviour {
         playerCards.Add(card);
         EvaluatePlayerSum();
         AddCardToUI(card, playerCardStart.transform, true);
+        audioSource.PlayOneShot(sfxCardDeal);
         if (playerSum > 21) bust = true;
         hitComplete = true;
 
@@ -266,6 +286,7 @@ public class BlackJack : MonoBehaviour {
             dealerCards.Add(card);
             EvaluateDealerSum();
             AddCardToUI(card, dealerCardStart.transform, false);
+            audioSource.PlayOneShot(sfxCardDeal);
         } else standDone = true;
 
         actionTimer = 0f;
@@ -279,26 +300,31 @@ public class BlackJack : MonoBehaviour {
         {
             payout = 0;
             stateText.text = "BUST";
+            audioSource.PlayOneShot(sfxLose);
         }
         else if (blackJack && dealerSum != 21)
         {
             payout = Mathf.RoundToInt(playerBet * 2.5f); // original + 1.5x
             stateText.text = "BLACKJACK";
+            audioSource.PlayOneShot(sfxWin);
         }
         else if (dealerSum > 21 || playerSum > dealerSum)
         {
             payout = playerBet * 2; // original + win
             stateText.text = "WIN";
+            audioSource.PlayOneShot(sfxWin);
         }
         else if (playerSum < dealerSum)
         {
             payout = 0;
             stateText.text = "DEALER WINS";
+            audioSource.PlayOneShot(sfxLose);
         }
         else
         {
             payout = playerBet; // push (refund)
             stateText.text = "PUSH";
+            audioSource.PlayOneShot(sfxCollide);
         }
 
         //Pay Player
@@ -383,7 +409,8 @@ public class BlackJack : MonoBehaviour {
     private void RevealCard(int index) {
         if (index >= dealerCardUIs.Count) return;
         var cui = dealerCardUIs[index];
-        cui.obj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Cards/" + cui.card.name);
+        cui.obj.GetComponent<Image>().sprite = Resources.Load<Sprite>("Cards/" + cui.card.name);
+        audioSource.PlayOneShot(sfxCardFlip);
     }
 
     public void FlipHiddenCard() {
@@ -412,7 +439,8 @@ public class BlackJack : MonoBehaviour {
         dealerCards[1] = newCard;
         var cui = dealerCardUIs[1];
         cui.card = newCard;
-        cui.obj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Cards/" + newCard.name);
+        cui.obj.GetComponent<Image>().sprite = Resources.Load<Sprite>("Cards/" + newCard.name);
+        audioSource.PlayOneShot(sfxCardFlip);
         dealerCardUIs[1] = cui;
         EvaluateDealerSum();
     }
