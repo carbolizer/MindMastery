@@ -122,6 +122,9 @@ public class RouletteRoll : MonoBehaviour
         RouletteTable[AssociatedNumberMode.Column3] = new RouletteTableEntry{m_name = "Column3", m_payoutMultiplier = 2, m_mode = AssociatedNumberMode.Column3, m_customMultiplier = 3};
 
         RouletteTable[AssociatedNumberMode.Single] = new RouletteTableEntry{m_name = "Single", m_payoutMultiplier = 35, m_mode = AssociatedNumberMode.Single};
+
+
+        RouletteManager.Instance.RouletteTable = RouletteTable;
         anim = GetComponent<Animator>();
         PreRoll();
     }
