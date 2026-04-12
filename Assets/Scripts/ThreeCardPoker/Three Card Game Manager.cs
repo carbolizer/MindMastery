@@ -37,6 +37,11 @@ public class ThreeCardGameManager : MonoBehaviour
 
     void Start()
     {
+        if (GlobalGameManager.Instance != null)
+        {
+            GlobalGameManager.Instance.currentGame = CurrentGame.ThreeCardPoker;
+        }
+
         StartGame();
     }
 
@@ -240,7 +245,17 @@ public class ThreeCardGameManager : MonoBehaviour
         foreach (var card in playerCardVisuals) card.SetCard(null, false);
         foreach (var card in dealerCardVisuals) card.SetCard(null, false);
         UpdateWinText(0);
-        StartGame();
+
+        // Check if they are broke AFTER the hand is over
+        if (GlobalGameManager.Player.m_money < 10)
+        {
+            UpdateUI("You're broke! Security is escorting you out.");
+            GlobalGameManager.Player.m_state = PlayerSpecialState.Broke;
+        }
+        else
+        {
+            StartGame(); // Only start a new hand if they can afford it
+        }
     }
 
     private int GetPairPlusMultiplier(PokerHandRank rank)
