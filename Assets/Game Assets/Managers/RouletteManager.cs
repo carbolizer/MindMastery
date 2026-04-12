@@ -24,6 +24,7 @@ public class RouletteManager : MonoBehaviour
         {
             Instance = this;
             Cells = new GameObject[transform.childCount];
+            
             for (int i = 0; i < transform.childCount; i++)
             {
                 for (int j = 0; j < transform.transform.childCount; j++)
@@ -36,6 +37,11 @@ public class RouletteManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    void Start()
+    {
+        GlobalGameManager.Instance.currentGame = CurrentGame.Roulette;
     }
 
 }

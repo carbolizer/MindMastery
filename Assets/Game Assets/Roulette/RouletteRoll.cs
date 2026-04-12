@@ -292,14 +292,14 @@ public class RouletteTableEntry
             break;
 
             case AssociatedNumberMode.Even:
-            if (num % 2 == 0)
+            if (num % 2 == 0 && num != 0)
             {
                 return true;
             }
             break;
 
             case AssociatedNumberMode.Odd:
-            if (num % 2 != 0)
+            if (num % 2 != 0 && num != 0)
             {
                 return true;
             }
@@ -322,7 +322,7 @@ public class RouletteTableEntry
             case AssociatedNumberMode.Dozen1:
             case AssociatedNumberMode.Dozen2:
             case AssociatedNumberMode.Dozen3:
-            if (num > 12 * (m_customMultiplier - 1) && num <= 12 * m_customMultiplier)
+            if (num > 12 * (m_customMultiplier - 1) && num <= 12 * m_customMultiplier && num != 0)
             {
                 return true;
             }

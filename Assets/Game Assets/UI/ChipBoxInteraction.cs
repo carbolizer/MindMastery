@@ -64,7 +64,7 @@ public class ChipBoxInteraction : MonoBehaviour
                 chipData.m_amount -=  1;
 
                 spawnedChips[i] = obj;
-                obj.GetComponent<SpriteRenderer>().enabled = true;
+                
      
             }
         }
@@ -76,7 +76,7 @@ public class ChipBoxInteraction : MonoBehaviour
     }
 
     // Update is called once per frame
-    void LateUpdate()
+    void Update()
     {
         RefreshChips();
     }

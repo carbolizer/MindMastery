@@ -52,10 +52,11 @@ public class Chip : MonoBehaviour
 
     void Start()
     {
+        ColorMat = Instantiate(ColorMat);
         RefreshColorValue();
         m_state = ChipState.Lazy;
         GetComponent<UIButton>().ClickFunction.AddListener(OnDragStart);
-        GetComponent<SpriteRenderer>().enabled = true;
+        
     }
 
 
@@ -151,7 +152,7 @@ public class Chip : MonoBehaviour
                     m_parentOffset.x + m_posParent.transform.position.x,
                     m_parentOffset.y + m_posParent.transform.position.y,
                     -25
-                    );
+                );
                 break;
 
                 case ChipState.Held:
@@ -255,6 +256,7 @@ public class Chip : MonoBehaviour
             }
             
         }
+        GetComponent<SpriteRenderer>().enabled = true;
     }
 
     public void OnDragStart()
