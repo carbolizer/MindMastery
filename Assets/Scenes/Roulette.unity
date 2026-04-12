@@ -2005,6 +2005,7 @@ GameObject:
   m_Component:
   - component: {fileID: 525132947}
   - component: {fileID: 525132946}
+  - component: {fileID: 525132948}
   - component: {fileID: 525132945}
   - component: {fileID: 525132944}
   m_Layer: 0
@@ -2077,9 +2078,9 @@ MonoBehaviour:
   ClickFunction:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1172027}
-        m_TargetAssemblyTypeName: RouletteManager, Assembly-CSharp
-        m_MethodName: OnToggleMind
+      - m_Target: {fileID: 5969600407758955037, guid: 96fa2b1ffc0e4174fb099aa806d57cfa, type: 3}
+        m_TargetAssemblyTypeName: GlobalGameManager, Assembly-CSharp
+        m_MethodName: OnSelectNewGameScene
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2163,6 +2164,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &525132948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 525132943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 454878ec744d5e34a9d7cdc222aef254, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SceneSwap
+  ToScene: 0
 --- !u!1 &526717553
 GameObject:
   m_ObjectHideFlags: 0

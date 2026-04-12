@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.Events;
+using System.Reflection;
 
 
 public enum OutlineUpdateState
@@ -102,6 +103,25 @@ public class UIButton : MonoBehaviour
     //gets called on button clicked
     public void OnClick()
     {
-        ClickFunction?.Invoke();
+        if (ClickFunction == null || ClickFunction.GetPersistentEventCount() == 0)
+        return;
+
+        string methodName = ClickFunction.GetPersistentMethodName(0);
+
+        var gm = GlobalGameManager.Instance;
+
+        var method = gm.GetType().GetMethod(
+            methodName,
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
+        );
+
+        if (method != null)
+        {
+            method.Invoke(gm, null);
+        }
+        else
+        {
+            Debug.LogError($"Method {methodName} not found on GlobalGameManager");
+        }
     }
 }

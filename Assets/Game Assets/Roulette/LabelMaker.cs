@@ -32,7 +32,7 @@ public class LabelMaker : MonoBehaviour
             {
                 var pref = Instantiate(LabelPrefab);
                 var cellNum = (AssociatedNumberMode)(int)item.GetComponent<RouletteCell>().Cell - 37;
-                pref.GetComponent<LabelData>().DoesWin = RouletteManager.Instance.RouletteTable[cellNum].m_wonNextRoll;
+                pref.GetComponent<LabelData>().DoesWin = item.GetComponent<RouletteCell>().doesWinNext;
                 RouletteManager.Instance.labels.Add(pref);
 
                 
