@@ -260,6 +260,17 @@ public class GlobalGameManager : MonoBehaviour
         
     }
 
+    // accepts the SceneSwap component directly from the button that was clicked
+    public void OnUIButtonSceneChange(SceneSwap swapData)
+    {
+        if (swapData == null) return;
+
+        // Grab the enum value and trigger the exact same fade animation
+        int newScene = (int)swapData.ToScene;
+        FadeOutObj.GetComponent<FadeOutFuncs>().animator.SetInteger("SceneID", newScene);
+        FadeOutObj.GetComponent<FadeOutFuncs>().animator.SetBool("SwitchScene", true);
+    }
+
     public void SwitchScene()
     {
         
@@ -334,3 +345,5 @@ public enum CursorState
     UP,
     DOWN
 }
+
+
