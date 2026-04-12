@@ -412,7 +412,7 @@ public class BlackJack : MonoBehaviour {
         dealerCards[1] = newCard;
         var cui = dealerCardUIs[1];
         cui.card = newCard;
-        cui.obj.GetComponent<Image>().sprite = Resources.Load<Sprite>("Cards/" + newCard.name);
+        cui.obj.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Cards/" + newCard.name);
         dealerCardUIs[1] = cui;
         EvaluateDealerSum();
     }

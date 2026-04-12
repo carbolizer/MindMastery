@@ -17,7 +17,7 @@ public class FadeOutFuncs : MonoBehaviour
         switch (animator.GetInteger("SceneID"))
         {
             case 0:
-            //Default Game Scene
+            //SceneManager.LoadScene();
             break;
             case 1:
             //Roulette
