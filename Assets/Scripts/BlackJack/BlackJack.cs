@@ -340,6 +340,25 @@ public class BlackJack : MonoBehaviour {
         cui.obj.GetComponent<Image>().sprite = Resources.Load<Sprite>("Cards/" + cui.card.name);
     }
 
+    public void FlipHiddenCard() {
+        for (int i = 0; i < dealerCardUIs.Count; i++) {
+            if (dealerCardUIs[i].card.hidden) {
+                // find and unhide the matching card in dealerCards
+                for (int j = 0; j < dealerCards.Count; j++) {
+                    if (dealerCards[j].name == dealerCardUIs[i].card.name) {
+                        Card c = dealerCards[j];
+                        c.hidden = false;
+                        dealerCards[j] = c;
+                        break;
+                    }
+                }
+                RevealCard(i);
+                EvaluateDealerSum();
+                return;
+            }
+        }
+    }
+
     private void AddCardToUI(Card card, Transform transform, bool player) {
         var cardSprite = Resources.Load<Sprite>(card.hidden ? "Cards/back" : "Cards/" + card.name);
         var obj = Instantiate(cardPrefab, transform);
