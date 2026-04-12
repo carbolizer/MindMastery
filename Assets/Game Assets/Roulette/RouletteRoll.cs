@@ -157,7 +157,7 @@ public class RouletteRoll : MonoBehaviour
 
                 //Debug
                 obj.GetComponent<SpriteRenderer>().color = Color.blue;
-                obj.GetComponent<SpriteRenderer>().enabled = true;
+                //obj.GetComponent<SpriteRenderer>().enabled = true;
 
             } else
             {
@@ -183,7 +183,7 @@ public class RouletteRoll : MonoBehaviour
 
                 //Debug
                 obj.GetComponent<SpriteRenderer>().color = Color.blue;
-                obj.GetComponent<SpriteRenderer>().enabled = true;
+                //obj.GetComponent<SpriteRenderer>().enabled = true;
             } else
             {
                 obj.GetComponent<SpriteRenderer>().color = Color.white;
@@ -250,9 +250,13 @@ public class RouletteRoll : MonoBehaviour
             totalResult += chipValue * multiplier;
         } 
         GlobalGameManager.Player.m_money += totalResult;
-            
+        
+        if (RouletteManager.Instance.UsedPowersThisRound)
+        {
+            GlobalGameManager.Player.m_suspicion += 10;
+        }
+        RouletteManager.Instance.UsedPowersThisRound = false;
         GlobalGameManager.Instance.DestroyChipsOnTable();
-        //if (didWin) GlobalGameManager.Player.m_money += bet * currentPrizeMultiplier;
         Debug.Log("Money after roll: " + GlobalGameManager.Player.m_money);
         GlobalGameManager.Player.RefreshChipCount();
         GlobalGameManager.Instance.DisableChipHover = false;
