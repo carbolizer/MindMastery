@@ -32,7 +32,18 @@ public class GlobalGameManager : MonoBehaviour
     private List<GameObject> HoveredObjects = new List<GameObject>();
     public List<GameObject> ChipsOnTable;
 
+    public bool DisableChipHover = false;
 
+    public void DestroyChipsOnTable()
+    {
+        var list = Instance.ChipsOnTable;
+
+        for (int i = list.Count - 1; i >= 0; i--)
+        {
+            Destroy(list[i]);
+        }
+        list.Clear();
+    }
 
     void Awake()
     {
@@ -77,7 +88,7 @@ public class GlobalGameManager : MonoBehaviour
 
     private void UpdateHoverList()
     {
-        if (HoveredObjects.Count > 0 && CursorState == CursorState.UP)
+        if (HoveredObjects.Count > 0 && CursorState == CursorState.UP && !Instance.DisableChipHover)
         {   
             if (HoveredObjects[HoveredObjects.Count - 1] != HoveredObject)
             {
@@ -139,16 +150,19 @@ public class PlayerData
     {
         ChipType[] chipTypes = (ChipType[])System.Enum.GetValues(typeof(ChipType));
         float amount = m_money;
-        for (int i = 14; i > 0; i--)
+
+        for (int i = chipTypes.Length - 1; i >= 0; i--)
         {
+            int chipValue = (int)chipTypes[i];
             int chipsOfThisType = 0;
-            while (amount > (int)chipTypes[i])
+
+            while (amount >= chipValue)
             {
-                amount -= (int)chipTypes[i];
+                amount -= chipValue;
                 chipsOfThisType++;
             }
-            m_chips[(int)chipTypes[i]].m_amount = chipsOfThisType;
-            
+
+            m_chips[chipValue].m_amount = chipsOfThisType;
         }
     }
 }

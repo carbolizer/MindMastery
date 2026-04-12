@@ -1,8 +1,10 @@
+using UnityEditor;
 using UnityEngine;
 
 public class Pointer : MonoBehaviour
 {
     private SpriteRenderer sr;
+    private GameObject Label;
 
     [SerializeField]
     private Sprite offSpr;
@@ -13,6 +15,7 @@ public class Pointer : MonoBehaviour
     {
         sr = GetComponent<SpriteRenderer>();
         sr.sprite = offSpr;
+        Label = transform.GetChild(0).gameObject;
     }
 
     public void ClickDown()
@@ -23,5 +26,19 @@ public class Pointer : MonoBehaviour
     public void ClickRelease()
     {
         sr.sprite = offSpr;
+    }
+
+    void Update()
+    {
+        if (GlobalGameManager.Instance.HoveredObject != null && GlobalGameManager.Instance.HoveredObject.TryGetComponent(out Tooltip tooltip))
+        {  
+            Label.GetComponent<TMPro.TextMeshPro>().text = tooltip.m_tooltip;
+            Label.GetComponent<TMPro.TextMeshPro>().color = tooltip.m_baseColor;
+            Label.GetComponent<TMPro.TextMeshPro>().outlineColor = tooltip.m_outlineColor;
+            Label.SetActive(true);
+        } else
+        {
+            Label.SetActive(false);
+        }
     }
 }

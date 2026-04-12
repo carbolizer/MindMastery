@@ -65,55 +65,72 @@ public class Chip : MonoBehaviour
     {
         var mat1 = GetComponent<SpriteRenderer>().material;
         Color col = new Color();
+        GetComponent<Tooltip>().m_tooltip = "$";
 
         switch (m_value)
         {
             case ChipType.Ten:
                 col = Color.deepPink;
+                GetComponent<Tooltip>().m_tooltip += "10";
                 break;
             case ChipType.Twenty:
                 col = Color.blue;
+                GetComponent<Tooltip>().m_tooltip += "20";
                 break;
             case ChipType.Fifty:
                 col = Color.red;
+                GetComponent<Tooltip>().m_tooltip += "50";
                 break;
             case ChipType.OneHundered:
                 col = Color.yellow;
+                GetComponent<Tooltip>().m_tooltip += "100";
                 break;
             case ChipType.TwoHunderedFifty:
                 col = Color.yellowGreen;
+                GetComponent<Tooltip>().m_tooltip += "250";
                 break;
             case ChipType.FiveHundered:
                 col = Color.orange;
+                GetComponent<Tooltip>().m_tooltip += "500";
                 break;
             case ChipType.SevenHundered:
                 col = Color.purple;
+                GetComponent<Tooltip>().m_tooltip += "700";
                 break;
             case ChipType.OneThousand:
                 col = Color.teal;
+                GetComponent<Tooltip>().m_tooltip += "1K";
                 break;
             case ChipType.OneThousandFiveHundered:
                 col = Color.tan;
+                GetComponent<Tooltip>().m_tooltip += "1.5K";
                 break;
-            case ChipType.ThreeThousand:
+            case ChipType.ThreeThousand: 
                 col = Color.violet;
+                GetComponent<Tooltip>().m_tooltip += "3K";
                 break;
-            case ChipType.FourThousand:
+            case ChipType.FourThousand:    
                 col = Color.navyBlue;
+                GetComponent<Tooltip>().m_tooltip += "4K";
                 break;
             case ChipType.FiveThousand:
                 col = Color.brown;
+                GetComponent<Tooltip>().m_tooltip += "5K";
                 break;
             case ChipType.TenThousand:
                 col = Color.cornsilk;
+                GetComponent<Tooltip>().m_tooltip += "10K";
                 break;
             case ChipType.FiftyThousand:
                 col = Color.aquamarine;
+                GetComponent<Tooltip>().m_tooltip += "50K";
                 break;
             case ChipType.OneHunderedThousand:
                 col = Color.black;
+                GetComponent<Tooltip>().m_tooltip += "100K";
                 break;
         }
+        GetComponent<Tooltip>().m_baseColor = col;
         ColorMat.SetColor("_Color", col);
         mat1.SetTexture("_MainTex", ColorMat.GetTexture("_MainTex"));
         GetComponent<SpriteRenderer>().materials = new Material[] { mat1, ColorMat };
@@ -269,31 +286,39 @@ public class Chip : MonoBehaviour
     //Same for ChipBox, though you can just use the one i made across both games
     void OnTriggerEnter2D(Collider2D collision)
     {   
-        if (collision.gameObject.name == "TableHB")
+        if (!GlobalGameManager.Instance.DisableChipHover)
         {
-            GlobalGameManager.Instance.ChipsOnTable.Add(gameObject); 
-            m_onTable = true;
+            if (collision.gameObject.name == "TableHB")
+            {
+                GlobalGameManager.Instance.ChipsOnTable.Add(gameObject); 
+                m_onTable = true;
+            }
+            if (collision.gameObject.name == "ChipBox")
+            {
+                m_overBox = true;
+            }
         }
-        if (collision.gameObject.name == "ChipBox")
-        {
-            m_overBox = true;
-        }
+        
     }
 
     
 
     void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.name == "TableHB")
+        if (!GlobalGameManager.Instance.DisableChipHover)
         {
-            GlobalGameManager.Instance.ChipsOnTable.Remove(gameObject);
-            m_onTable = false;
-            ClosestTile = null;
-            
+            if (collision.gameObject.name == "TableHB")
+            {
+                GlobalGameManager.Instance.ChipsOnTable.Remove(gameObject);
+                m_onTable = false;
+                ClosestTile = null;
+                
+            }
+            if (collision.gameObject.name == "ChipBox")
+            {
+                m_overBox = false;
+            }
         }
-        if (collision.gameObject.name == "ChipBox")
-        {
-            m_overBox = false;
-        }
+        
     }
 }

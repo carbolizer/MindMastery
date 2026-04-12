@@ -87,6 +87,7 @@ public class RouletteRoll : MonoBehaviour
     
     private int lastWin;
     public bool rolling = false;
+    private Animator anim;
 
 
     //Number Adjacency unused
@@ -121,7 +122,7 @@ public class RouletteRoll : MonoBehaviour
         RouletteTable[AssociatedNumberMode.Column3] = new RouletteTableEntry{m_name = "Column3", m_payoutMultiplier = 2, m_mode = AssociatedNumberMode.Column3, m_customMultiplier = 3};
 
         RouletteTable[AssociatedNumberMode.Single] = new RouletteTableEntry{m_name = "Single", m_payoutMultiplier = 35, m_mode = AssociatedNumberMode.Single};
-
+        anim = GetComponent<Animator>();
         PreRoll();
     }
 
@@ -153,7 +154,7 @@ public class RouletteRoll : MonoBehaviour
 
                 //Debug
                 obj.GetComponent<SpriteRenderer>().color = Color.blue;
-                //obj.GetComponent<SpriteRenderer>().enabled = true;
+                obj.GetComponent<SpriteRenderer>().enabled = true;
 
             } else
             {
@@ -179,7 +180,7 @@ public class RouletteRoll : MonoBehaviour
 
                 //Debug
                 obj.GetComponent<SpriteRenderer>().color = Color.blue;
-                //obj.GetComponent<SpriteRenderer>().enabled = true;
+                obj.GetComponent<SpriteRenderer>().enabled = true;
             } else
             {
                 obj.GetComponent<SpriteRenderer>().color = Color.white;
@@ -192,64 +193,84 @@ public class RouletteRoll : MonoBehaviour
 
     }
 
+    void Update()
+    {
+        if (GlobalGameManager.Instance.ChipsOnTable.Count > 0 && !rolling)
+        {
+            GetComponent<CircleCollider2D>().enabled = true;
+        } else
+        {
+            GetComponent<CircleCollider2D>().enabled = false;
+        }
+    }
+
+    public void OnFinishSpin()
+    {
+        GetComponent<CircleCollider2D>().enabled = true;
+        rolling = false;
+        anim.SetBool("StartSpin", false);
+
+        bet = 0;
+        //Animation
+        float currentPrizeMultiplier = 1;
+        bool didWin = false;
+
+        
+
+        float totalResult = 0;
+
+        foreach (var chip in GlobalGameManager.Instance.ChipsOnTable)
+        {
+            int chipValue = (int)chip.GetComponent<Chip>().m_value;
+            GameObject cell = chip.GetComponent<Chip>().ClosestTile;
+
+            float multiplier = -1; // default = lose
+
+            if (RouletteManager.Instance.Cells.Contains(cell))
+            {
+                if (int.Parse(cell.name) == lastWin)
+                {
+                    multiplier = 35; // single number payout
+                }
+            }
+
+            foreach (var EC in RouletteManager.Instance.ExtraCells)
+            {
+                if (cell == EC)
+                {
+                    var entry = RouletteTable[(AssociatedNumberMode)
+                        (int)EC.GetComponent<RouletteCell>().Cell - 37];
+
+                    if (entry.m_wonNextRoll)
+                        multiplier = entry.m_payoutMultiplier;
+                }
+            }
+
+            totalResult += chipValue * multiplier;
+        } 
+        GlobalGameManager.Player.m_money += totalResult;
+            
+        GlobalGameManager.Instance.DestroyChipsOnTable();
+        //if (didWin) GlobalGameManager.Player.m_money += bet * currentPrizeMultiplier;
+        Debug.Log("Money after roll: " + GlobalGameManager.Player.m_money);
+        GlobalGameManager.Player.RefreshChipCount();
+        GlobalGameManager.Instance.DisableChipHover = false;
+
+        //Award player then do a new preroll
+        PreRoll();
+    }
+
     //Run Preroll after rolling
     public void Roll()
     {
         if (!rolling)
         {
+            GetComponent<CircleCollider2D>().enabled = false;
             rolling = true;
-            bet = 0;
-            //Animation
-            float currentPrizeMultiplier = 1;
-            bool didWin = false;
-
-            GlobalGameManager.Player.m_money -= bet;
-
-            foreach (var chip in GlobalGameManager.Instance.ChipsOnTable)
-            {   
-                bet += (int)chip.GetComponent<Chip>().m_value;
-                GameObject cell = chip.GetComponent<Chip>().ClosestTile;
-                if (RouletteManager.Instance.Cells.Contains(cell))
-                {
-                    currentPrizeMultiplier = 36;
-                    if (int.Parse(cell.name) == lastWin)
-                    {
-                        didWin = true;
-                    }
-                }
-
-                foreach (var EC in RouletteManager.Instance.ExtraCells)
-                {
-                    if (cell == EC)
-                    {
-                        
-                        currentPrizeMultiplier = RouletteTable[(AssociatedNumberMode)(int)EC.GetComponent<RouletteCell>().Cell - 37].m_payoutMultiplier;
-                        didWin = RouletteTable[(AssociatedNumberMode)(int)EC.GetComponent<RouletteCell>().Cell - 37].m_wonNextRoll;
-                    }
-                }
-            }
-
-            if (!didWin)
-            {
-                currentPrizeMultiplier *= -1;
-                
-            }
+            anim.SetBool("StartSpin", true);
+            GlobalGameManager.Instance.DisableChipHover = true;
             
-            var list = GlobalGameManager.Instance.ChipsOnTable;
-
-            for (int i = list.Count - 1; i >= 0; i--)
-            {
-                var chip = list[i];
-
-                Destroy(chip);
-            }
-            GlobalGameManager.Player.m_money += bet * currentPrizeMultiplier;
-            Debug.Log("Money after roll: " + GlobalGameManager.Player.m_money);
-            GlobalGameManager.Player.RefreshChipCount();
-
-
-            //Award player then do a new preroll
-            PreRoll();
+            
         }
         
     }

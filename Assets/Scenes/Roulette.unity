@@ -1227,7 +1227,7 @@ GameObject:
   - component: {fileID: 309611381}
   - component: {fileID: 309611380}
   - component: {fileID: 309611379}
-  - component: {fileID: 309611378}
+  - component: {fileID: 309611383}
   - component: {fileID: 309611377}
   - component: {fileID: 309611376}
   - component: {fileID: 309611382}
@@ -1288,18 +1288,6 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 2
---- !u!114 &309611378
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 309611375}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba701b555f65b304489f22ac0b5f28be, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ChipStack
 --- !u!114 &309611379
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1313,7 +1301,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButoon
   m_outlineColor: {r: 1, g: 0.94493365, b: 0, a: 1}
-  m_outlineWidth: 15
+  m_outlineWidth: 2
   ClickFunction:
     m_PersistentCalls:
       m_Calls:
@@ -1425,6 +1413,21 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &309611383
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 309611375}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3301ca9283b9cd468b1a22df4946f8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Tooltip
+  m_tooltip: Spin
+  m_baseColor: {r: 1, g: 0.94509804, b: 0, a: 1}
+  m_outlineColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1 &381927968
 GameObject:
   m_ObjectHideFlags: 0
@@ -4909,12 +4912,12 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: fd349be6d4d0d9c44a7ca1447b8cd2da, type: 3}
+  m_Sprite: {fileID: 21300000, guid: bd614c725fdd43947891dbe79acb43b8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.28, y: 0.72}
+  m_Size: {x: 17.902098, y: 10.06993}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -6197,35 +6200,35 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChipBoxInteraction
   ChipPrefab: {fileID: 893183020352363283, guid: 59c44fd63347524489f25d3a40b2d17d, type: 3}
   chipPositions:
-  - position: {x: -1.5, y: -3}
+  - position: {x: -2, y: -3}
     chipType: 10
-  - position: {x: -0.755, y: -3}
+  - position: {x: -1, y: -3}
     chipType: 20
   - position: {x: 0, y: -3}
     chipType: 50
-  - position: {x: 0.75, y: -3}
+  - position: {x: 1, y: -3}
     chipType: 100
-  - position: {x: 1.5, y: -3}
+  - position: {x: 2, y: -3}
     chipType: 250
-  - position: {x: -1.5, y: -3.75}
+  - position: {x: -2, y: -3.75}
     chipType: 500
-  - position: {x: -0.75, y: -3.75}
+  - position: {x: -1, y: -3.75}
     chipType: 700
   - position: {x: 0, y: -3.75}
     chipType: 1000
-  - position: {x: 0.75, y: -3.75}
+  - position: {x: 1, y: -3.75}
     chipType: 1500
-  - position: {x: 1.5, y: -3.75}
+  - position: {x: 2, y: -3.75}
     chipType: 3000
-  - position: {x: -1.5, y: -4.5}
+  - position: {x: -2, y: -4.5}
     chipType: 4000
-  - position: {x: -0.75, y: -4.5}
+  - position: {x: -1, y: -4.5}
     chipType: 5000
   - position: {x: 0, y: -4.5}
     chipType: 10000
-  - position: {x: 0.75, y: -4.5}
+  - position: {x: 1, y: -4.5}
     chipType: 50000
-  - position: {x: 1.5, y: -4.5}
+  - position: {x: 2, y: -4.5}
     chipType: 100000
 --- !u!1 &2063333037
 GameObject:

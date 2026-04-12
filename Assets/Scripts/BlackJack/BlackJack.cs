@@ -21,10 +21,17 @@ public class BlackJack : MonoBehaviour {
     public float cardWidth = 64f;
     public TextMeshProUGUI playerCardValue;
     public TextMeshProUGUI dealerCardValue;
-    public TextMeshProUGUI stateText;
-    public TextMeshProUGUI betAmountText;
+    public TextMeshPro stateText;
+    public TextMeshPro betAmountText;
 
+    public PlayState m_playState = PlayState.Betting;
 
+    public enum PlayState
+    {
+        Betting,
+        Playing,
+        Resetting
+    }
     /*
         Create blackjack states
         Create transitions between states
@@ -38,7 +45,29 @@ public class BlackJack : MonoBehaviour {
         playButton.SetActive(false);
         
         State bet       = new("bet",        () => { shouldPlayAgain = false; placedBet = false; playerBet = 0; resolveTimer = 0f; playButton.SetActive(false); }, (dt) => { playButton.SetActive(playerBet > 0); }, () => { playButton.SetActive(false); });
-        State deal      = new("deal",       () => { shouldPlayAgain = false; resolveTimer = 0f; DestroyCards(); playerCards.Clear(); dealerCards.Clear(); dealerCardUIs.Clear(); dealState = 0; bust = false; blackJack = false; playerSum = 0; dealerSum = 0; }, UpdateDeal, () => {});
+        State deal = new("deal",
+            () =>
+            {
+                shouldPlayAgain = false;
+                resolveTimer = 0f;
+
+               
+                GlobalGameManager.Player.m_money -= playerBet;
+                GlobalGameManager.Instance.DestroyChipsOnTable();
+
+                DestroyCards();
+                playerCards.Clear();
+                dealerCards.Clear();
+                dealerCardUIs.Clear();
+                dealState = 0;
+                bust = false;
+                blackJack = false;
+                playerSum = 0;
+                dealerSum = 0;
+            },
+            UpdateDeal,
+            () => {}
+            );
         State play      = new("play",       () => { shouldHit = false; shouldStand = false; blackJack = playerSum == 21; }, (dt) => {}, () => {});
         State hit       = new("hit",        () => { shouldHit = false; hitComplete = false; }, UpdateHit, () => {});
         State stand     = new("stand",      () => { shouldStand = false; standDone = false; RevealCard(1); }, UpdateStand, () => {});
@@ -78,6 +107,18 @@ public class BlackJack : MonoBehaviour {
         stateMachine.AddState(quit);
 
         stateMachine.SetState("bet");
+
+        
+    }
+
+    void UpdateTable()
+    {
+        int bet = 0;
+        foreach (var chip in GlobalGameManager.Instance.ChipsOnTable)
+        {   
+            bet += (int)chip.GetComponent<Chip>().m_value;
+        }
+        playerBet = bet;
     }
 
     void Update() { 
@@ -85,6 +126,30 @@ public class BlackJack : MonoBehaviour {
         playerCardValue.text = playerSum.ToString();
         dealerCardValue.text = dealerSum.ToString();
         betAmountText.text = playerBet.ToString();
+        
+        switch (m_playState)
+        {
+            case PlayState.Betting:
+            UpdateTable();
+            playButton.SetActive(playerBet > 0);
+            againButton.SetActive(false);
+            break;
+
+            case PlayState.Playing:
+            playButton.SetActive(false);
+            break;
+
+            case PlayState.Resetting:
+            againButton.SetActive(true);
+            break;
+        }
+        
+        
+
+
+
+
+
     }
 
     public void ChangeBet(int amount)   { if (playerBet + amount >= 0) playerBet += amount; }
@@ -92,7 +157,7 @@ public class BlackJack : MonoBehaviour {
     public void Hit()                   { shouldHit = true; }
     public void Stand()                 { shouldStand = true; }
     public void Quit()                  { shouldQuit = true; }
-    public void PlayAgain()             { shouldPlayAgain = true; placedBet = true; }
+    public void PlayAgain()             { if (m_playState == PlayState.Playing) { m_playState = PlayState.Resetting; } else { m_playState = PlayState.Playing; } shouldPlayAgain = true; placedBet = true; }
 
 // private
     private Deck            deck;
@@ -193,12 +258,41 @@ public class BlackJack : MonoBehaviour {
         actionTimer = 0f;
     }
 
-    private void Resolve() {
-        if (bust)                                           { sessionEarnings -= playerBet;                     stateText.text = "BUST"; }
-        else if (blackJack && dealerSum != 21)              { sessionEarnings += (int)(playerBet * 1.5f);       stateText.text = "BLACKJACK"; }
-        else if (dealerSum > 21 || playerSum > dealerSum)   { sessionEarnings += playerBet;                     stateText.text = "WIN"; }
-        else if (playerSum < dealerSum)                     { sessionEarnings -= playerBet;                     stateText.text = "DEALER WINS"; }
-        else                                                {                                                   stateText.text = "PUSH"; }
+    private void Resolve()
+    {
+        int payout = 0;
+
+        if (bust)
+        {
+            payout = 0;
+            stateText.text = "BUST";
+        }
+        else if (blackJack && dealerSum != 21)
+        {
+            payout = Mathf.RoundToInt(playerBet * 2.5f); // original + 1.5x
+            stateText.text = "BLACKJACK";
+        }
+        else if (dealerSum > 21 || playerSum > dealerSum)
+        {
+            payout = playerBet * 2; // original + win
+            stateText.text = "WIN";
+        }
+        else if (playerSum < dealerSum)
+        {
+            payout = 0;
+            stateText.text = "DEALER WINS";
+        }
+        else
+        {
+            payout = playerBet; // push (refund)
+            stateText.text = "PUSH";
+        }
+
+        //Pay Player
+        GlobalGameManager.Player.m_money += payout;
+        GlobalGameManager.Player.RefreshChipCount();
+
+        Debug.Log("Money after round: " + GlobalGameManager.Player.m_money);
     }
 
     private void EvaluatePlayerSum() {
